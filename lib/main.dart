@@ -20,16 +20,9 @@ void main() async {
       channelDescription: 'Menampilkan progres unduhan media di latar belakang',
       channelImportance: NotificationChannelImportance.LOW,
       priority: NotificationPriority.LOW,
-      iconData: const NotificationIconData(
-        resType: ResourceType.mipmap,
-        resPrefix: ResourcePrefix.ic,
-        name: 'launcher',
-      ),
     ),
     iosNotificationOptions: const IOSNotificationOptions(),
-    foregroundTaskOptions: const ForegroundTaskOptions(
-      interval: 5000,
-      isOnceEvent: false,
+    foregroundTaskOptions: ForegroundTaskOptions(
       autoRunOnBoot: false,
       allowWakeLock: true,
       allowWifiLock: true,

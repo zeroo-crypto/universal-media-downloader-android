@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.zeroo.universal_media_downloader"
-    compileSdk 34
+    compileSdk 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -39,7 +39,7 @@ android {
     defaultConfig {
         applicationId "com.zeroo.universal_media_downloader"
         minSdk 24
-        targetSdk 34
+        targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
