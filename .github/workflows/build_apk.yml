@@ -32,17 +32,11 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Generate Gradle Wrapper
-        working-directory: android
-        run: |
-          gradle wrapper || true
-          chmod +x gradlew || true
-
       - name: Install Dependencies
         run: flutter pub get
 
       - name: Run Tests
-        run: flutter test || true
+        run: flutter test
 
       - name: Build Release APKs
         run: |
