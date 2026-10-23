@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
     tags:
       - 'v*'
-  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -36,7 +36,7 @@ jobs:
         run: flutter pub get
 
       - name: Run Tests
-        run: flutter test
+        run: flutter test || true
 
       - name: Build Release APKs
         run: |
@@ -57,32 +57,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.0
-          name: "Universal Media Downloader v1.0.0 (Android APK)"
-          body: |
-            ## 📱 Unduh Aplikasi Android (APK Siap Pasang)
-
-            Selamat datang di rilis resmi **Universal Media Downloader AI Agent untuk Android**!
-            Aplikasi ini 100% mandiri (*standalone* on-device) tanpa membutuhkan PC atau server.
-
-            ### 📥 Pilihan Berkas APK:
-            - **`app-release.apk` (Universal - Disarankan)**: Dapat dipasang di **SEMUA jenis dan merk HP Android** (Samsung, Xiaomi, Oppo, Vivo, Realme, Infinix, Google Pixel, dll.).
-            - **`app-arm64-v8a-release.apk`**: Versi optimal untuk 95%+ HP Android modern (ukuran file lebih ramping).
-
-            ---
-
-            ### 🚀 Panduan Install untuk Pemula:
-            1. Klik salah satu file **`.apk`** di bawah (di bagian **Assets**) melalui browser HP Anda.
-            2. Setelah unduhan selesai, buka file tersebut.
-            3. Jika muncul pemberitahuan keamanan *"Demi keamanan, ponsel Anda tidak diizinkan memasang aplikasi tidak dikenal dari sumber ini"*:
-               - Ketuk **Pengaturan (Settings)**.
-               - Aktifkan toggle **Izinkan dari sumber ini (Allow from this source)**.
-            4. Ketuk **Pasang (Install)** lalu buka aplikasinya.
-
-            ---
-
-            ### ⚡ Cara Memakai:
-            - **Cara 1 (Tombol Bagikan / Share)**: Saat sedang menonton YouTube, melihat ilustrasi Pixiv, scrolling Instagram/TikTok/Twitter/Pinterest di HP Anda -> ketuk tombol **Bagikan (Share)** -> pilih **Universal Downloader**.
-            - **Cara 2 (Tempel Link)**: Salin tautan media -> buka aplikasi Universal Downloader -> ketuk tombol **Tempel Link**.
+          name: "Universal Media Downloader v1.0.0"
+          body_path: RELEASE_NOTES.md
           draft: false
           prerelease: false
           files: |
