@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import '../core/constants/platforms.dart';
 import '../core/storage/hierarchy_manager.dart';
 import '../core/processors/ffmpeg_processor.dart';
 import '../core/utils/clean_cancel.dart';
 import '../extractors/base_extractor.dart';
+import '../extractors/instagram_extractor.dart';
 
 enum DownloadStatus {
   queued,
@@ -75,11 +77,40 @@ class DownloadService extends ChangeNotifier {
     _processQueue();
   }
 
+  static const MethodChannel _mediaScannerChannel =
+      MethodChannel('com.zeroo.universal_media_downloader/media_scanner');
+
+  /// Indexes media file with Android MediaStore so it appears immediately in Gallery/Photos
+  static Future<void> scanMediaFile(String filePath) async {
+    try {
+      if (Platform.isAndroid) {
+        await _mediaScannerChannel.invokeMethod('scanFile', {'path': filePath});
+      }
+    } catch (e) {
+      debugPrint('MediaScanner platform channel error: $e');
+    }
+  }
+
+  /// Completes a task and triggers MediaStore indexing
+  Future<void> completeTask(DownloadTask task) async {
+    task.status = DownloadStatus.completed;
+    task.progress = 1.0;
+    if (task.savedFilePath != null) {
+      await scanMediaFile(task.savedFilePath!);
+    }
+    notifyListeners();
+  }
+
   void cancelTask(String taskId) {
     try {
       final task = _tasks.firstWhere((t) => t.id == taskId);
-      if (task.status == DownloadStatus.downloading || task.status == DownloadStatus.queued) {
+      if (task.status == DownloadStatus.downloading ||
+          task.status == DownloadStatus.queued ||
+          task.status == DownloadStatus.processing) {
         task.cancelToken.cancel('Cancelled by user');
+        if (task.metadata.isUgoira || task.status == DownloadStatus.processing) {
+          FFmpegProcessor.cancelRunningSessions();
+        }
         task.status = DownloadStatus.cancelled;
         if (task.savedFilePath != null) {
           CleanCancel.cleanupPartialFile(task.savedFilePath!);
@@ -106,7 +137,6 @@ class DownloadService extends ChangeNotifier {
     task.status = DownloadStatus.downloading;
     notifyListeners();
 
-    final startTime = DateTime.now();
     var lastBytes = 0;
     var lastTime = DateTime.now();
 
@@ -133,6 +163,27 @@ class DownloadService extends ChangeNotifier {
 
       task.savedFilePath = destinationPath;
       final partFilePath = '$destinationPath.part';
+
+      // Eliminate silent HTML download: throw ExtractorException if trying to download webpage HTML
+      final streamUrl = task.selectedStream.url.toLowerCase();
+      final streamUri = Uri.tryParse(streamUrl);
+      final streamHost = streamUri?.host.toLowerCase() ?? '';
+      final isInstagram = streamHost == 'instagram.com' ||
+          streamHost == 'www.instagram.com' ||
+          streamHost == 'm.instagram.com' ||
+          streamUrl.startsWith('https://www.instagram.com/') ||
+          streamUrl.startsWith('https://instagram.com/') ||
+          streamUrl.startsWith('http://www.instagram.com/') ||
+          streamUrl.startsWith('http://instagram.com/') ||
+          streamUrl.startsWith('https://m.instagram.com/') ||
+          streamUrl.startsWith('http://m.instagram.com/');
+      if (isInstagram &&
+          (streamUrl.contains('/p/') || streamUrl.contains('/reel/') || streamUrl.contains('/reels/') || streamUrl.contains('/tv/')) &&
+          !streamUrl.contains('/media/')) {
+        throw ExtractorException(
+          'Tidak ada stream video/gambar yang ditemukan untuk Instagram (${task.metadata.workId}). Diperlukan Cookie sessionid pada Pengaturan.',
+        );
+      }
 
       // 2. Special Handler for Pixiv Ugoira (ZIP to MP4 assembly)
       if (task.metadata.isUgoira && task.metadata.ugoiraFrames != null) {
@@ -169,6 +220,7 @@ class DownloadService extends ChangeNotifier {
           task.status = DownloadStatus.completed;
           task.progress = 1.0;
           _updateNotification('Selesai Diunduh (MP4)', task.metadata.title, 1.0);
+          await scanMediaFile(destinationPath);
         } else {
           throw Exception('Gagal mengompilasi animasi Ugoira menjadi MP4.');
         }
@@ -218,6 +270,7 @@ class DownloadService extends ChangeNotifier {
         task.status = DownloadStatus.completed;
         task.progress = 1.0;
         _updateNotification('Selesai Diunduh', task.metadata.title, 1.0);
+        await scanMediaFile(destinationPath);
       } else {
         throw Exception('Berkas unduhan tidak ditemukan setelah selesai.');
       }

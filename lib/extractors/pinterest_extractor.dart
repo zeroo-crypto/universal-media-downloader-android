@@ -5,7 +5,7 @@ import 'base_extractor.dart';
 
 class PinterestExtractor implements BaseExtractor {
   static final RegExp _urlRegex = RegExp(
-    r'(?:pinterest\.(?:com|[a-z]{2})/pin/|pin\.it/)(\d+|[a-zA-Z0-9_-]+)',
+    r'(?:pinterest\.(?:com|[a-z]{2,3}(?:\.[a-z]{2})?)/pin/|pin\.it/)(\d+|[a-zA-Z0-9_-]+)',
     caseSensitive: false,
   );
 

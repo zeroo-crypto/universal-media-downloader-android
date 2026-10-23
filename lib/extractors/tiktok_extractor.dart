@@ -5,7 +5,7 @@ import 'base_extractor.dart';
 
 class TikTokExtractor implements BaseExtractor {
   static final RegExp _urlRegex = RegExp(
-    r'(?:tiktok\.com\/.*(?:video|\bv\b)\/(\d+)|vt\.tiktok\.com\/([a-zA-Z0-9]+))',
+    r'(?:tiktok\.com\/.*(?:video|photo|\bv\b)\/(\d+)|(?:vt|vm)\.tiktok\.com\/([a-zA-Z0-9]+))',
     caseSensitive: false,
   );
 
@@ -18,7 +18,7 @@ class TikTokExtractor implements BaseExtractor {
   Future<MediaMetadata> extract(String url, {String? cookieToken}) async {
     // 1. Resolve shortlink if needed
     var targetUrl = url;
-    if (url.contains('vt.tiktok.com')) {
+    if (url.contains('vt.tiktok.com') || url.contains('vm.tiktok.com')) {
       final client = http.Client();
       try {
         final req = http.Request('GET', Uri.parse(url))..followRedirects = false;
@@ -31,7 +31,7 @@ class TikTokExtractor implements BaseExtractor {
       }
     }
 
-    final videoIdMatch = RegExp(r'/video/(\d+)').firstMatch(targetUrl);
+    final videoIdMatch = RegExp(r'/(?:video|photo)/(\d+)').firstMatch(targetUrl);
     final videoId = videoIdMatch?.group(1) ?? 'TikTok_${DateTime.now().millisecondsSinceEpoch}';
 
     // 2. Fetch watermark-free stream via mobile TikWM API

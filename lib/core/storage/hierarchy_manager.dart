@@ -42,6 +42,9 @@ class HierarchyManager {
   /// Sanitizes folder and file names to be valid across Windows and Android FAT/ext4 file systems.
   static String sanitizeName(String name) {
     var cleaned = name.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_').trim();
+    if (cleaned == '.' || cleaned == '..') {
+      cleaned = '_';
+    }
     if (cleaned.isEmpty) {
       cleaned = 'General';
     }
@@ -129,11 +132,19 @@ class HierarchyManager {
     Directory targetWorkDir,
     String workId,
   ) async {
+    return _migrateToWorkIdFolder(creatorDir, targetWorkDir, workId);
+  }
+
+  static Future<void> _migrateToWorkIdFolder(
+    Directory creatorDir,
+    Directory targetWorkDir,
+    String workId,
+  ) async {
     try {
       final files = await creatorDir.list().where((e) => e is File).cast<File>().toList();
       for (final file in files) {
         final filename = p.basename(file.path);
-        if (filename.startsWith(workId) || filename.contains(workId)) {
+        if (filename.startsWith('${workId}_') || filename.startsWith('$workId.') || filename == workId) {
           final newPath = p.join(targetWorkDir.path, filename);
           if (!await File(newPath).exists()) {
             await file.rename(newPath);

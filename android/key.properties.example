@@ -1,0 +1,30 @@
+# Custom Android Release Signing Keystore Configuration
+# Copy this file to 'android/key.properties' and fill in your signing credentials.
+#
+# If 'android/key.properties' is not provided, the build system automatically falls back
+# to the deterministic project release keystore ('android/app/release.keystore')
+# ensuring reproducible, valid v1/v2/v3 signatures across CI and local developer machines.
+#
+# storeFile: Absolute path, or relative path from 'android/' (or 'android/app/')
+# storePassword: Password to unlock the keystore file
+# keyAlias: Alias identifier of the signing key entry
+# keyPassword: Password to unlock the specific key entry
+#
+# Example (Relative path to keystore in android/app/):
+# storeFile=app/my-release-key.jks
+# storePassword=your_keystore_password
+# keyAlias=your_key_alias
+# keyPassword=your_key_password
+#
+# Example (Absolute path):
+# storeFile=C:/Users/username/.android/my-release-key.jks
+# storePassword=your_keystore_password
+# keyAlias=your_key_alias
+# keyPassword=your_key_password
+#
+# To generate a new production keystore with keytool:
+# keytool -genkeypair -v -keystore my-release-key.jks -alias your_key_alias -keyalg RSA -keysize 2048 -validity 10000 -storetype PKCS12
+storeFile=app/release.keystore
+storePassword=universal_media_downloader
+keyAlias=universal_media_key
+keyPassword=universal_media_downloader

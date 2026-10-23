@@ -64,7 +64,18 @@ class FFmpegProcessor {
           return outputFile;
         }
       }
+      // If cancelled or failed, purge any partial output file
+      final partialFile = File(outputMp4Path);
+      if (await partialFile.exists()) {
+        await partialFile.delete();
+      }
       return null;
+    } catch (e) {
+      final partialFile = File(outputMp4Path);
+      if (await partialFile.exists()) {
+        await partialFile.delete();
+      }
+      rethrow;
     } finally {
       // 4. Zero Orphaned Frames: purge temporary directory immediately
       if (await sessionDir.exists()) {
@@ -73,21 +84,40 @@ class FFmpegProcessor {
     }
   }
 
+  /// Cancels all running FFmpegKit sessions immediately
+  static Future<void> cancelRunningSessions() async {
+    try {
+      await FFmpegKit.cancel();
+    } catch (_) {}
+  }
+
   /// Extracts audio track (AAC/M4A) from an existing video file
   static Future<File?> extractAudio({
     required String videoPath,
     required String outputAudioPath,
   }) async {
-    final command = "-y -i \"$videoPath\" -vn -acodec copy \"$outputAudioPath\"";
-    final session = await FFmpegKit.execute(command);
-    final returnCode = await session.getReturnCode();
+    try {
+      final command = "-y -i \"$videoPath\" -vn -acodec copy \"$outputAudioPath\"";
+      final session = await FFmpegKit.execute(command);
+      final returnCode = await session.getReturnCode();
 
-    if (ReturnCode.isSuccess(returnCode)) {
-      final outFile = File(outputAudioPath);
-      if (await outFile.exists() && await outFile.length() > 0) {
-        return outFile;
+      if (ReturnCode.isSuccess(returnCode)) {
+        final outFile = File(outputAudioPath);
+        if (await outFile.exists() && await outFile.length() > 0) {
+          return outFile;
+        }
       }
+      final partialAudio = File(outputAudioPath);
+      if (await partialAudio.exists()) {
+        await partialAudio.delete();
+      }
+      return null;
+    } catch (e) {
+      final partialAudio = File(outputAudioPath);
+      if (await partialAudio.exists()) {
+        await partialAudio.delete();
+      }
+      rethrow;
     }
-    return null;
   }
 }

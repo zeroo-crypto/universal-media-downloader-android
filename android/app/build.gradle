@@ -22,6 +22,22 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def keystorePropertiesFile = rootProject.file('key.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withReader('UTF-8') { reader ->
+        keystoreProperties.load(reader)
+    }
+} else {
+    def appKeystorePropertiesFile = project.file('key.properties')
+    if (appKeystorePropertiesFile.exists()) {
+        appKeystorePropertiesFile.withReader('UTF-8') { reader ->
+            keystoreProperties.load(reader)
+        }
+        keystorePropertiesFile = appKeystorePropertiesFile
+    }
+}
+
 android {
     namespace "com.zeroo.universal_media_downloader"
     compileSdk flutter.compileSdkVersion
@@ -45,9 +61,46 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+        release {
+            def resolvedStoreFile = null
+            if (keystorePropertiesFile.exists() && keystoreProperties.containsKey('storeFile')) {
+                def rawPath = keystoreProperties['storeFile']
+                if (rawPath != null && !rawPath.trim().isEmpty()) {
+                    def directFile = file(rawPath)
+                    if (directFile.exists()) {
+                        resolvedStoreFile = directFile
+                    } else {
+                        def rootRelative = rootProject.file(rawPath)
+                        if (rootRelative.exists()) {
+                            resolvedStoreFile = rootRelative
+                        }
+                    }
+                }
+            }
+
+            if (resolvedStoreFile != null && resolvedStoreFile.exists()) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile resolvedStoreFile
+                storePassword keystoreProperties['storePassword']
+            } else {
+                // Fallback to deterministic project release keystore
+                storeFile file('release.keystore')
+                storePassword 'universal_media_downloader'
+                keyAlias 'universal_media_key'
+                keyPassword 'universal_media_downloader'
+            }
+
+            v1SigningEnabled true
+            v2SigningEnabled true
+            v3SigningEnabled true
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
         }

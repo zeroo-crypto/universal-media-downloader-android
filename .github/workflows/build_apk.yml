@@ -38,10 +38,32 @@ jobs:
       - name: Run Tests
         run: flutter test
 
-      - name: Build Release APKs
+      - name: Configure Gradle Wrapper Permissions
         run: |
+          chmod +x android/gradlew || true
+
+      - name: Build Universal Release APK
+        run: |
+          mkdir -p staged-apks
           flutter build apk --release --android-skip-build-dependency-validation
+          cp build/app/outputs/flutter-apk/app-release.apk staged-apks/app-release.apk
+
+      - name: Build Split-per-ABI Release APKs
+        run: |
           flutter build apk --release --split-per-abi --android-skip-build-dependency-validation
+          # Restore the staged universal APK so all APK flavors are preserved
+          cp staged-apks/app-release.apk build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Verify APK Quality Gate
+        run: |
+          chmod +x scripts/verify_apk.sh
+          ./scripts/verify_apk.sh build/app/outputs/flutter-apk
+
+      - name: Generate SHA-256 Checksums
+        run: |
+          cd build/app/outputs/flutter-apk
+          sha256sum *.apk > SHA256SUMS.txt
+          cat SHA256SUMS.txt
 
       - name: Upload APK Artifacts
         uses: actions/upload-artifact@v4
@@ -51,6 +73,8 @@ jobs:
             build/app/outputs/flutter-apk/app-release.apk
             build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
             build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            build/app/outputs/flutter-apk/app-x86_64-release.apk
+            build/app/outputs/flutter-apk/SHA256SUMS.txt
           retention-days: 14
 
       - name: Publish to GitHub Releases
@@ -65,5 +89,7 @@ jobs:
             build/app/outputs/flutter-apk/app-release.apk
             build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
             build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            build/app/outputs/flutter-apk/app-x86_64-release.apk
+            build/app/outputs/flutter-apk/SHA256SUMS.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

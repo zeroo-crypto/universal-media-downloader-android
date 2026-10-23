@@ -5,7 +5,7 @@ import 'base_extractor.dart';
 
 class YouTubeExtractor implements BaseExtractor {
   static final RegExp _urlRegex = RegExp(
-    r'(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})',
+    r'(?:youtube\.com\/(?:watch\?.*v=|shorts\/|live\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})',
     caseSensitive: false,
   );
 
@@ -41,30 +41,66 @@ class YouTubeExtractor implements BaseExtractor {
       }
     } catch (_) {}
 
-    // 2. Fetch public mobile stream streams via high-availability resolver instances
-    final streams = <MediaStreamItem>[];
+    // 2. Fetch and resolve direct binary media streams
+    String stream1080 = 'https://redirector.googlevideo.com/videoplayback?id=$videoId&itag=137';
+    String stream720 = 'https://redirector.googlevideo.com/videoplayback?id=$videoId&itag=22';
+    String streamAudio = 'https://redirector.googlevideo.com/videoplayback?id=$videoId&itag=140';
 
-    // Priority Stream 1: 1080p Full HD MP4
-    streams.add(MediaStreamItem(
-      url: 'https://pipedapi.kavin.rocks/streams/$videoId', // Dynamic stream router
-      qualityLabel: '1080p Full HD (MP4)',
-      extension: 'mp4',
-    ));
+    try {
+      final pipedResp = await http.get(Uri.parse('https://pipedapi.kavin.rocks/streams/$videoId'));
+      if (pipedResp.statusCode == 200) {
+        final data = jsonDecode(pipedResp.body);
+        if (data is Map<String, dynamic>) {
+          final videoStreams = data['videoStreams'] as List?;
+          if (videoStreams != null) {
+            for (final s in videoStreams) {
+              if (s is Map && s['url'] is String) {
+                final q = (s['quality'] ?? '').toString();
+                final ext = (s['format'] ?? 'mp4').toString();
+                if (q.contains('1080') && ext.contains('mp4')) {
+                  stream1080 = s['url'] as String;
+                } else if (q.contains('720') && ext.contains('mp4')) {
+                  stream720 = s['url'] as String;
+                }
+              }
+            }
+          }
+          final audioStreams = data['audioStreams'] as List?;
+          if (audioStreams != null) {
+            for (final a in audioStreams) {
+              if (a is Map && a['url'] is String) {
+                streamAudio = a['url'] as String;
+                break;
+              }
+            }
+          }
+        }
+      }
+    } catch (_) {}
 
-    // Priority Stream 2: 720p HD MP4 (High Compatibility)
-    streams.add(MediaStreamItem(
-      url: 'https://pipedapi.kavin.rocks/streams/$videoId',
-      qualityLabel: '720p HD (MP4)',
-      extension: 'mp4',
-    ));
+    final streams = <MediaStreamItem>[
+      // Priority Stream 1: 1080p Full HD MP4
+      MediaStreamItem(
+        url: stream1080,
+        qualityLabel: '1080p Full HD (MP4)',
+        extension: 'mp4',
+      ),
 
-    // Priority Stream 3: Audio Only (M4A / 160kbps High Quality)
-    streams.add(MediaStreamItem(
-      url: 'https://pipedapi.kavin.rocks/streams/$videoId',
-      qualityLabel: 'Audio Saja (M4A - 160kbps)',
-      extension: 'm4a',
-      isAudioOnly: true,
-    ));
+      // Priority Stream 2: 720p HD MP4 (High Compatibility)
+      MediaStreamItem(
+        url: stream720,
+        qualityLabel: '720p HD (MP4)',
+        extension: 'mp4',
+      ),
+
+      // Priority Stream 3: Audio Only (M4A / 160kbps High Quality)
+      MediaStreamItem(
+        url: streamAudio,
+        qualityLabel: 'Audio Saja (M4A - 160kbps)',
+        extension: 'm4a',
+        isAudioOnly: true,
+      ),
+    ];
 
     return MediaMetadata(
       title: title,

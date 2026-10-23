@@ -126,7 +126,7 @@ class ProgressItemWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                if (isDownloading)
+                if (isDownloading || isProcessing)
                   TextButton.icon(
                     icon: const Icon(Icons.close, size: 18, color: Colors.red),
                     label: const Text('Batalkan', style: TextStyle(color: Colors.red)),

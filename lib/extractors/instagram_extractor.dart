@@ -3,9 +3,17 @@ import 'package:http/http.dart' as http;
 import '../core/constants/platforms.dart';
 import 'base_extractor.dart';
 
+class ExtractorException implements Exception {
+  final String message;
+  ExtractorException(this.message);
+
+  @override
+  String toString() => 'ExtractorException: $message';
+}
+
 class InstagramExtractor implements BaseExtractor {
   static final RegExp _urlRegex = RegExp(
-    r'(?:instagram\.com\/(?:p|reel|tv)\/([a-zA-Z0-9_-]+))',
+    r'(?:instagram\.com\/(?:p|reels?|tv)\/([a-zA-Z0-9_-]+))',
     caseSensitive: false,
   );
 
@@ -23,7 +31,7 @@ class InstagramExtractor implements BaseExtractor {
   Future<MediaMetadata> extract(String url, {String? cookieToken}) async {
     final shortcode = extractShortcode(url);
     if (shortcode == null) {
-      throw Exception('Format URL Instagram tidak valid: $url');
+      throw ExtractorException('Format URL Instagram tidak valid: $url');
     }
 
     final endpoint = Uri.parse('https://www.instagram.com/p/$shortcode/?__a=1&__d=dis');
@@ -79,11 +87,11 @@ class InstagramExtractor implements BaseExtractor {
     }
 
     if (streams.isEmpty) {
-      // Fallback direct endpoint
+      // Direct media fallback endpoint resolving CDN image rather than downloading web HTML page as .mp4
       streams.add(MediaStreamItem(
-        url: url,
-        qualityLabel: 'Media Stream',
-        extension: 'mp4',
+        url: 'https://www.instagram.com/p/$shortcode/media/?size=l',
+        qualityLabel: 'Media Stream (Direct CDN)',
+        extension: 'jpg',
       ));
     }
 

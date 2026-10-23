@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:path/path.dart' as p;
 
 /// Zero Orphaned Files Utility
 /// Automatically purges .part, .tmp, .crdownload, and 0-byte corrupt files
@@ -51,7 +50,7 @@ class CleanCancel {
     try {
       if (!await dir.exists()) return 0;
 
-      final entities = await dir.list(recursive: false).toList();
+      final entities = await dir.list(recursive: true, followLinks: false).toList();
       for (final entity in entities) {
         if (entity is File) {
           final isTemp = isTemporary(entity.path);

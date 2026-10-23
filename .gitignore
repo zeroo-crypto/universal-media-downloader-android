@@ -32,4 +32,8 @@
 **/android/.gradle
 **/android/captures/
 **/android/local.properties
+**/android/key.properties
 **/android/**/GeneratedPluginRegistrant.java
+
+# Agent internal scratch & coordination
+.agents/

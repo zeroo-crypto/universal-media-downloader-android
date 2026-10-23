@@ -44,7 +44,7 @@ enum MediaPlatform {
       return MediaPlatform.youtube;
     } else if (lower.contains('pixiv.net') || lower.contains('pximg.net')) {
       return MediaPlatform.pixiv;
-    } else if (lower.contains('pinterest.com') || lower.contains('pin.it')) {
+    } else if (lower.contains('pinterest.') || lower.contains('pin.it')) {
       return MediaPlatform.pinterest;
     } else if (lower.contains('twitter.com') || lower.contains('x.com')) {
       return MediaPlatform.twitter;

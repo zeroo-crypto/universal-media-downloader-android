@@ -31,6 +31,23 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  @override
+  void didUpdateWidget(HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialUrl != null &&
+        widget.initialUrl!.isNotEmpty &&
+        widget.initialUrl != oldWidget.initialUrl) {
+      _urlController.text = widget.initialUrl!;
+      _analyzeUrl(widget.initialUrl!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _urlController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pasteFromClipboard() async {
     final data = await Clipboard.getData(Clipboard.kTextPlain);
     if (data != null && data.text != null && data.text!.isNotEmpty) {
