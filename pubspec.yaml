@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: '>=3.1.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -15,28 +15,28 @@ dependencies:
   http: ^1.2.1
 
   # Background Services & Notifications
-  flutter_foreground_task: ^8.18.0
-  permission_handler: ^11.3.1
+  flutter_foreground_task: any
+  permission_handler: any
 
   # Android System & Share Sheet Integration
-  receive_sharing_intent: ^1.4.5
-  path_provider: ^2.1.3
-  open_filex: ^4.4.0
+  receive_sharing_intent: any
+  path_provider: any
+  open_filex: any
 
   # Media Processing (FFmpeg for Pixiv Ugoira & Audio)
-  ffmpeg_kit_flutter_full: ^6.0.3
-  archive: ^3.6.1
-  mime: ^1.0.5
+  ffmpeg_kit_flutter_new: ^4.6.7
+  archive: any
+  mime: any
 
   # State Management & Local Storage
-  provider: ^6.1.2
-  shared_preferences: ^2.2.3
-  intl: ^0.19.0
+  provider: any
+  shared_preferences: any
+  intl: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: any
 
 flutter:
   uses-material-design: true

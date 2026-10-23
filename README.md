@@ -1,102 +1,119 @@
-# Universal Media Downloader - Android APK (Standalone On-Device)
+<div align="center">
 
-Aplikasi Android mandiri (*Standalone On-Device*) untuk mengunduh, mengekstrak, dan menata berkas media dari berbagai platform populer (YouTube, Pixiv, Pinterest, Twitter/X, TikTok, Instagram) langsung di ponsel Android tanpa membutuhkan PC atau server backend.
+# 🚀 Universal Media Downloader AI Agent (Android APK)
 
----
+### Aplikasi Pengunduh Media Mandiri (Standalone On-Device) untuk Semua HP Android
+**100% Berjalan di HP • Tanpa Butuh PC • Tanpa Perlu Server • Integrasi Tombol Bagikan**
 
-## Fitur Utama
+[![Android](https://img.shields.io/badge/Platform-Android%208.0%2B%20(Oreo%20s.d.%2015%2B)-brightgreen?style=for-the-badge&logo=android)](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/latest)
+[![Release](https://img.shields.io/github/v/release/zeroo-crypto/universal-media-downloader-android?style=for-the-badge&color=blue)](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/latest)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/zeroo-crypto/universal-media-downloader-android/build_apk.yml?style=for-the-badge&logo=githubactions)](https://github.com/zeroo-crypto/universal-media-downloader-android/actions)
 
-1. **Android Share Sheet Integration (`ACTION_SEND`)**:
-   - Cukup tekan tombol **"Bagikan"** (Share) dari aplikasi YouTube, Pixiv, Twitter, Pinterest, Instagram, atau TikTok -> pilih **Universal Downloader**.
-   - Aplikasi otomatis membaca tautan, mengekstrak resolusi tertinggi, dan menampilkan kartu konfirmasi unduhan.
+<br/>
 
-2. **Kepatuhan Aturan Hierarki Folder (Anti-Amnesia Memory Rules)**:
-   - Tersimpan di: `/storage/emulated/0/Download/Media/<Platform>/<Nama_Creator>/...`
-   - **Adaptive Hierarchy**: Karya tunggal pertama tersimpan di root artis. Unduhan ke-2 atau album multi-halaman otomatis masuk ke subfolder ID karya disertai migrasi otomatis file lama.
-   - **Aturan Pinterest**: Created Pins tersimpan di root nama kreator, sedangkan Saved Boards tersimpan di subfolder nama board.
-   - **Zero Generic Folders**: Melarang folder sampah bernama `<Platform> Media`.
+<a href="https://github.com/zeroo-crypto/universal-media-downloader-android/releases/latest">
+  <img src="https://img.shields.io/badge/📥%20KLIK%20DI%20SINI%20UNTUK%20DOWNLOAD%20APK%20(GRATIS)-0088CC?style=for-the-badge&logo=android&logoColor=white" height="55" alt="Download APK"/>
+</a>
 
-3. **Background Service & Status Bar Notification**:
-   - Berjalan stabil di latar belakang menggunakan `flutter_foreground_task` sehingga tidak terbunuh oleh Android Doze Mode.
-   - Bilah notifikasi interaktif menampilkan progres persentase, kecepatan unduh (MB/s), serta tombol batal.
-
-4. **On-Device Media Processing**:
-   - **Pixiv Ugoira**: Mengunduh ZIP frame langsung di memori ponsel dan mengompilasinya menjadi video MP4 berkualitas tinggi (H.264) menggunakan engine mobile `FFmpeg-Kit` dengan delay resmi Pixiv.
-   - **Zero Redundant GIF**: Otomatis memusnahkan frame sementara dan file perantara setelah MP4 tervalidasi.
-
-5. **Zero Orphaned Files & Clean Cancellation**:
-   - Jika unduhan dibatalkan atau terputus, seluruh file perantara (`.part`, `.tmp`, `.crdownload`, dan file 0-byte) otomatis dibersihkan seketika.
-
-6. **In-App Cookie Vault**:
-   - Pengaturan penyimpanan token sesi untuk akses konten terbatas (Pixiv `PHPSESSID` untuk karya R-18, Twitter `auth_token`, Instagram `sessionid`).
+<br/><br/>
+</div>
 
 ---
 
-## Struktur Repositori
+## 📖 Apa Itu Universal Media Downloader?
 
+**Universal Media Downloader** adalah aplikasi Android mandiri untuk mengunduh, mengekstrak resolusi tertinggi, dan merapikan koleksi media Anda dari berbagai platform populer (YouTube, Pixiv, Twitter/X, TikTok, Instagram, Pinterest) langsung ke galeri HP Anda.
+
+Semua proses konversi (seperti mengubah animasi Pixiv Ugoira menjadi video MP4, ekstraksi lagu MP3/M4A, pembersihan file sampah) dikerjakan secara lokal di dalam HP Anda.
+
+---
+
+## 📥 Panduan Download & Install (Untuk Orang Awam & Pemula)
+
+Anda tidak perlu paham coding atau seluk-beluk GitHub untuk menggunakannya. Cukup ikuti 4 langkah mudah ini:
+
+### 1. Download Berkas APK
+Klik tombol biru **[DOWNLOAD APK DI SINI](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/latest)** di atas, lalu pada bagian paling bawah (**Assets**), pilih:
+- **`app-release.apk`** *(Disarankan untuk semua merk HP Android: Samsung, Xiaomi, Oppo, Vivo, Realme, Infinix, Pixel, dll)*.
+
+### 2. Buka File Hasil Download
+Setelah proses download selesai di browser HP Anda (Chrome, Samsung Internet, dll), buka file **`app-release.apk`**.
+
+### 3. Izinkan Pemasangan Aplikasi
+Jika muncul pemberitahuan keamanan:
+> *"Demi keamanan, ponsel Anda tidak diizinkan memasang aplikasi tidak dikenal dari sumber ini"*
+- Ketuk **Pengaturan (Settings)**.
+- Aktifkan tombol centang **"Izinkan dari sumber ini"** (*Allow from this source*).
+- Tekan tombol kembali (*Back*).
+
+### 4. Pasang (Install)
+Ketuk tombol **Pasang (Install)** dan tunggu beberapa detik hingga selesai. Aplikasi siap digunakan!
+
+---
+
+## ⚡ Cara Pakai: Super Cepat via Tombol "Bagikan"
+
+Anda tidak perlu repot-repot menyalin dan menempel link secara manual!
+
+1. Buka aplikasi medsos favorit Anda (YouTube, Pixiv, TikTok, Twitter/X, Instagram, atau Pinterest).
+2. Temukan video atau gambar yang ingin Anda simpan.
+3. Ketuk tombol **Bagikan (Share)** -> lalu pilih ikon **Universal Downloader**.
+4. Aplikasi akan otomatis terbuka, menganalisis media resolusi tertinggi, dan menampilkan tombol **Unduh Sekarang**!
+
+> *(Tersedia juga opsi manual: Anda bisa menyalin link lalu menekan tombol **"Tempel Link"** di beranda aplikasi).*
+
+---
+
+## 🎯 Platform yang Didukung
+
+| Platform | Format & Kualitas yang Didukung | Fitur Khusus |
+| :--- | :--- | :--- |
+| **YouTube** | Video 1080p Full HD, 720p HD, Audio M4A (160kbps), Shorts | Pilihan resolusi bebas & unduh audio lagu saja |
+| **Pixiv** | Ilustrasi High-Res (JPG/PNG), Manga Multi-Halaman (Album), Ugoira | Animasi Ugoira (ZIP) otomatis dirakit jadi video **MP4 mulus** on-device! |
+| **Pinterest** | Foto Kualitas Asli (*Originals*), Video Pin MP4 | Pemisahan rapi antara Created Pins & Saved Boards |
+| **Twitter / X** | Foto Master Resolusi Maksimal (`?name=orig`), Video MP4 Bitrate Tertinggi | Penataan folder otomatis berdasarkan nama user |
+| **TikTok** | Video HD Jernih **Tanpa Watermark** | Mendukung link pendek (`vt.tiktok.com`) |
+| **Instagram** | Video Reels HD, Foto Carousel Multi-Slide, Postingan | Otomatis mengunduh slide lengkap |
+
+---
+
+## 📁 Struktur Folder Rapi di HP Anda (Anti-Berantakan)
+
+Berkas yang diunduh tidak akan berserakan di sembarang tempat. Semuanya tertata otomatis di folder publik HP Anda:
 ```text
-universal-media-downloader-android/
-├── .github/workflows/
-│   └── build_apk.yml             # Otomasi build APK via GitHub Actions Cloud
-├── android/
-│   └── app/
-│       ├── src/main/AndroidManifest.xml  # Permissions & Share Intent Filter
-│       └── build.gradle                  # MinSDK 24, TargetSDK 34, ABI splits
-├── lib/
-│   ├── core/
-│   │   ├── constants/platforms.dart      # Platform & Media type definitions
-│   │   ├── storage/hierarchy_manager.dart# Penegakan aturan hierarki folder
-│   │   ├── processors/ffmpeg_processor.dart # FFmpeg-Kit mobile assembler
-│   │   └── utils/clean_cancel.dart       # Zero orphaned files cleaner
-│   ├── extractors/
-│   │   ├── base_extractor.dart           # Kontrak dasar ekstraktor
-│   │   ├── pixiv_extractor.dart          # Single, Manga, Ugoira zip -> MP4
-│   │   ├── youtube_extractor.dart        # Video 1080p/720p & Audio M4A
-│   │   ├── pinterest_extractor.dart      # High-res Pins & Boards
-│   │   ├── twitter_extractor.dart        # Original Photos & High-bitrate MP4
-│   │   ├── tiktok_extractor.dart         # Watermark-free HD video
-│   │   └── extractor_registry.dart       # Master URL dispatcher & router
-│   ├── services/
-│   │   ├── download_service.dart         # Queue worker, Dio stream & notifications
-│   │   ├── share_intent_service.dart     # Share Sheet receiver
-│   │   └── cookie_vault_service.dart     # Local encrypted session vault
-│   ├── ui/
-│   │   ├── screens/                      # Home, Downloads, Settings
-│   │   └── widgets/                      # Preview & Progress cards
-│   └── main.dart                         # Entry point aplikasi
-└── pubspec.yaml                          # Dependensi Flutter
+Penyimpanan Internal/Download/Media/
+├── YouTube/<Nama_Channel>/video.mp4
+├── Pixiv/<Nama_Artis>/<ID_Karya>/gambar.jpg
+├── Pixiv/<Nama_Artis>/<ID_Karya>/animasi.mp4
+├── Pinterest/<Nama_Kreator>/pin.jpg
+├── Twitter/<Username>/foto.jpg
+└── TikTok/<Username>/video.mp4
 ```
+
+- **Adaptive Hierarchy**: Jika seorang kreator memiliki lebih dari 1 karya atau album manga, aplikasi otomatis mengelompokkannya ke subfolder ID karya masing-masing.
+- **Zero Orphaned Files**: Jika unduhan dibatalkan di tengah jalan, berkas sementara (`.part` / `.tmp`) otomatis dimusnahkan agar memori HP Anda tetap bersih.
 
 ---
 
-## Cara Kompilasi & Menghasilkan File APK
+## ❓ Tanya Jawab (FAQ)
 
-### Opsi 1: Otomatis via GitHub Actions (Tanpa Perlu Pasang Apapun di PC)
-1. Buat repositori baru di GitHub (bisa private atau public).
-2. Push folder proyek ini ke repositori Anda:
-   ```bash
-   git init
-   git add .
-   git commit -m "feat: Universal Media Downloader Standalone Android APK"
-   git branch -M main
-   git remote add origin https://github.com/USERNAME/REPO_NAME.git
-   git push -u origin main
-   ```
-3. Buka tab **Actions** di GitHub -> alur kerja **Build Android APK** akan otomatis berjalan.
-4. Setelah selesai (~3-5 menit), unduh berkas APK siap pakai (`app-arm64-v8a-release.apk` atau `app-release.apk`) di bagian **Artifacts**.
+<details>
+<summary><b>1. Apakah aplikasi ini aman digunakan?</b></summary>
+Sangat aman! Seluruh kode aplikasi bersifat terbuka (open source) dan transparan. Tidak ada pelacak, tidak ada iklan pihak ketiga, dan tidak ada pengiriman data pribadi ke server manapun.
+</details>
 
-### Opsi 2: Kompilasi Lokal di PC
-Jika di komputer Anda sudah terpasang Flutter SDK dan Android SDK:
-```bash
-# 1. Unduh dependensi
-flutter pub get
+<details>
+<summary><b>2. Apakah butuh PC atau laptop yang menyala?</b></summary>
+Sama sekali TIDAK. Aplikasi ini 100% mandiri (*Standalone On-Device*) dan menjalankan seluruh tugas ekstraksi dan konversi langsung menggunakan prosesor ponsel Android Anda.
+</details>
 
-# 2. Jalankan pengujian
-flutter test
+<details>
+<summary><b>3. Bagaimana jika ingin mengunduh karya Pixiv yang dibatasi umur (R-18)?</b></summary>
+Buka menu <b>Pengaturan</b> di dalam aplikasi -> pada bagian <b>Cookie Vault</b>, masukkan token <code>PHPSESSID</code> dari akun Pixiv Anda. Aplikasi akan langsung mengenali izin akun Anda.
+</details>
 
-# 3. Bangun berkas APK Release
-flutter build apk --release --split-per-abi
+---
 
-# Hasil APK akan tersedia di:
-# build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-```
+<div align="center">
+Dibuat dengan ❤️ untuk kemudahan menikmati dan mengarsipkan karya media di Android.
+</div>
