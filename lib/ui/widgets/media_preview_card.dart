@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../constants/platforms.dart';
+import '../../core/constants/platforms.dart';
 import '../../extractors/base_extractor.dart';
 
 class MediaPreviewCard extends StatefulWidget {

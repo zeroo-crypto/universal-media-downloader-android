@@ -1,4 +1,4 @@
-import '../constants/platforms.dart';
+import '../core/constants/platforms.dart';
 import '../services/cookie_vault_service.dart';
 import 'base_extractor.dart';
 import 'pixiv_extractor.dart';

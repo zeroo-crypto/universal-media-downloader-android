@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../constants/platforms.dart';
+import '../../core/constants/platforms.dart';
 import '../../core/storage/hierarchy_manager.dart';
 import '../../core/utils/clean_cancel.dart';
 import '../../services/cookie_vault_service.dart';

@@ -1,4 +1,4 @@
-import '../constants/platforms.dart';
+import '../core/constants/platforms.dart';
 
 class MediaStreamItem {
   final String url;

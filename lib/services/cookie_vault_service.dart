@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import '../constants/platforms.dart';
+import '../core/constants/platforms.dart';
 
 class CookieVaultService {
   static const String _prefix = 'cookie_vault_';

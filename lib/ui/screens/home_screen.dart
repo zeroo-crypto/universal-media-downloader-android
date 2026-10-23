@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../constants/platforms.dart';
+import '../../core/constants/platforms.dart';
 import '../../extractors/base_extractor.dart';
 import '../../extractors/extractor_registry.dart';
 import '../../services/download_service.dart';

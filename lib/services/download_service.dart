@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import '../constants/platforms.dart';
+import '../core/constants/platforms.dart';
 import '../core/storage/hierarchy_manager.dart';
 import '../core/processors/ffmpeg_processor.dart';
 import '../core/utils/clean_cancel.dart';

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../constants/platforms.dart';
+import '../core/constants/platforms.dart';
 import 'base_extractor.dart';
 
 class PixivExtractor implements BaseExtractor {
