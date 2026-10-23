@@ -54,7 +54,7 @@ android {
 
     defaultConfig {
         applicationId "com.zeroo.universal_media_downloader"
-        minSdk 24
+        minSdk 21
         targetSdk flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
