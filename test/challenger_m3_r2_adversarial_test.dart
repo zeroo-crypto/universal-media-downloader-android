@@ -9,6 +9,7 @@ import 'package:universal_media_downloader/extractors/instagram_extractor.dart';
 import 'package:universal_media_downloader/services/share_intent_service.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('Empirical Challenge 1: ShareIntentService.extractUrl Edge Cases', () {
     test('Nested quotes & multi-layer enclosure stripping', () {
       final cases = <String, String>{

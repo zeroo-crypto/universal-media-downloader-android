@@ -11,6 +11,7 @@ import 'package:universal_media_downloader/extractors/instagram_extractor.dart';
 import 'package:universal_media_downloader/extractors/pinterest_extractor.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('PixivExtractor Mock Payload Tests', () {
     test('Tier 1: Parses single illustration artwork JSON payload correctly', () async {
       final mockClient = MockClient((request) async {

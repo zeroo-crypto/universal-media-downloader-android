@@ -7,6 +7,7 @@ import 'package:universal_media_downloader/extractors/youtube_extractor.dart';
 import 'package:universal_media_downloader/services/share_intent_service.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('Empirical Verification 1: Anti-Cheat & Production Code Verification', () {
     test('Verifies test/extractor_regex_test.dart directly invokes production code without local mocks', () {
       final file = File('test/extractor_regex_test.dart');

@@ -21,16 +21,27 @@ class HierarchyManager {
         if (await publicDownload.exists()) {
           downloadDir = publicDownload;
         } else {
-          final extDirs = await getExternalStorageDirectories(type: StorageDirectory.downloads);
-          if (extDirs != null && extDirs.isNotEmpty) {
-            downloadDir = extDirs.first;
-          }
+          try {
+            final extDirs = await getExternalStorageDirectories(type: StorageDirectory.downloads);
+            if (extDirs != null && extDirs.isNotEmpty) {
+              downloadDir = extDirs.first;
+            }
+          } catch (_) {}
         }
       }
-      downloadDir ??= await getDownloadsDirectory() ?? await getApplicationDocumentsDirectory();
-    } catch (_) {
-      downloadDir = await getApplicationDocumentsDirectory();
-    }
+      if (downloadDir == null) {
+        try {
+          downloadDir = await getDownloadsDirectory();
+        } catch (_) {}
+      }
+      if (downloadDir == null) {
+        try {
+          downloadDir = await getApplicationDocumentsDirectory();
+        } catch (_) {}
+      }
+    } catch (_) {}
+
+    downloadDir ??= Directory.systemTemp;
 
     final mediaDir = Directory(p.join(downloadDir.path, rootMediaFolder));
     if (!await mediaDir.exists()) {

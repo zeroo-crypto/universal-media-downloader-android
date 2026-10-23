@@ -9,6 +9,7 @@ import 'package:universal_media_downloader/extractors/instagram_extractor.dart';
 import 'package:universal_media_downloader/services/share_intent_service.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('Tier 1: Feature Coverage — Platform Detection & Standard URL Extraction', () {
     test('YouTube: detects standard watch, youtu.be, shorts, and embed URLs', () {
       const urls = [

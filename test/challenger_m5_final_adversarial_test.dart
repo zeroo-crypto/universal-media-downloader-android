@@ -15,6 +15,7 @@ import 'package:universal_media_downloader/extractors/youtube_extractor.dart';
 import 'package:universal_media_downloader/services/share_intent_service.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   late Directory tempTestDir;
 
   setUp(() {

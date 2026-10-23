@@ -140,6 +140,7 @@ class AaptBadgingResult {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('Tier 1: Feature Coverage — apksigner Signature Validation Parsing', () {
     test('Validates release APK signed with both v1 and v2 schemes', () {
       const mockApksignerOutput = '''

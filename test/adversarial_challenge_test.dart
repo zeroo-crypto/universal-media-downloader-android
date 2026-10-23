@@ -10,6 +10,7 @@ import 'package:universal_media_downloader/services/share_intent_service.dart';
 // Avoid extractor_registry.dart import to prevent pulling shared_preferences
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('Adversarial Challenge 1: URL Extraction & Trailing Punctuation/Enclosure Sanitization', () {
     test('Standard punctuation: .,!?;:)>] stripped successfully', () {
       final cases = {

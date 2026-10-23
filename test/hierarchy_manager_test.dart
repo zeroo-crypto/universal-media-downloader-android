@@ -5,6 +5,7 @@ import 'package:universal_media_downloader/core/constants/platforms.dart';
 import 'package:universal_media_downloader/core/storage/hierarchy_manager.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   late Directory tempTestDir;
 
   setUp(() {
