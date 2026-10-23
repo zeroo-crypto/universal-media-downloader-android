@@ -23,6 +23,7 @@ void main() async {
     ),
     iosNotificationOptions: const IOSNotificationOptions(),
     foregroundTaskOptions: ForegroundTaskOptions(
+      eventAction: ForegroundTaskEventAction.repeat(5000),
       autoRunOnBoot: false,
       allowWakeLock: true,
       allowWifiLock: true,
