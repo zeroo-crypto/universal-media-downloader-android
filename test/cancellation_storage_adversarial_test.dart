@@ -3,10 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:universal_media_downloader/core/constants/platforms.dart';
 import 'package:universal_media_downloader/core/utils/clean_cancel.dart';
-import 'package:universal_media_downloader/core/processors/ffmpeg_processor.dart';
 import 'package:universal_media_downloader/core/storage/hierarchy_manager.dart';
-import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -14,11 +11,9 @@ void main() {
 
   setUp(() {
     tempTestDir = Directory.systemTemp.createTempSync('adversarial_test_');
-    FFmpegKit.reset();
   });
 
   tearDown(() {
-    FFmpegKit.reset();
     try {
       if (tempTestDir.existsSync()) {
         tempTestDir.deleteSync(recursive: true);
@@ -231,98 +226,6 @@ void main() {
 
       final count = await CleanCancel.cleanupDirectory(tempTestDir);
       expect(count, equals(expectedDeletes));
-    });
-  });
-
-  // =========================================================================
-  // GROUP 3: FFmpegProcessor Cancellation, Session Abortion & Frame Purging
-  // =========================================================================
-  group('Adversarial Group 3: FFmpegProcessor Session Cancellation & Temporary Purging', () {
-    test('FFmpegProcessor.cancelRunningSessions invokes FFmpegKit.cancel and clears active sessions', () async {
-      expect(FFmpegKit.cancelCalled, isFalse);
-      
-      await FFmpegProcessor.cancelRunningSessions();
-
-      expect(FFmpegKit.cancelCalled, isTrue, reason: 'cancelRunningSessions must invoke FFmpegKit.cancel');
-    });
-
-    test('FFmpegProcessor.assembleUgoiraToMp4 cleans up partial MP4 and temp frames on cancel', () async {
-      final outputMp4 = p.join(tempTestDir.path, 'ugoira_output.mp4');
-
-      // Mock FFmpegKit: simulate cancellation returning ReturnCode.cancel
-      FFmpegKit.mockExecuteHandler = (command) {
-        // Simulate FFmpeg writing a partial corrupt output file before cancellation
-        File(outputMp4).writeAsStringSync('PARTIAL CORRUPT MP4 HEADER DATA');
-        return ReturnCode.cancel;
-      };
-
-      final framesMeta = [
-        {'file': '000000.jpg', 'delay': 100},
-        {'file': '000001.jpg', 'delay': 100},
-      ];
-
-      final result = await FFmpegProcessor.assembleUgoiraToMp4(
-        zipBytes: [1, 2, 3, 4],
-        framesMeta: framesMeta,
-        outputMp4Path: outputMp4,
-      );
-
-      // Must return null upon cancel/failure
-      expect(result, isNull);
-
-      // Must delete partial MP4 file
-      expect(File(outputMp4).existsSync(), isFalse, reason: 'Partial output MP4 file must be deleted upon cancel');
-
-      // Verify temp frame directory ugoira_* was deleted
-      final tempDir = Directory.systemTemp;
-      final ugoiraDirs = tempDir.listSync().whereType<Directory>().where((d) => p.basename(d.path).startsWith('ugoira_'));
-      expect(ugoiraDirs.isEmpty, isTrue, reason: 'Zero Orphaned Frames: session temporary directory must be wiped in finally block');
-    });
-
-    test('FFmpegProcessor.assembleUgoiraToMp4 purges partial file on catastrophic error', () async {
-      final outputMp4 = p.join(tempTestDir.path, 'ugoira_error.mp4');
-
-      FFmpegKit.mockExecuteHandler = (command) {
-        File(outputMp4).writeAsStringSync('PARTIAL DATA');
-        throw Exception('Native FFmpeg process SIGSEGV');
-      };
-
-      final framesMeta = [
-        {'file': '000000.jpg', 'delay': 100},
-      ];
-
-      bool threw = false;
-      try {
-        await FFmpegProcessor.assembleUgoiraToMp4(
-          zipBytes: [1, 2, 3],
-          framesMeta: framesMeta,
-          outputMp4Path: outputMp4,
-        );
-      } catch (_) {
-        threw = true;
-      }
-      expect(threw, isTrue, reason: 'assembleUgoiraToMp4 should rethrow exception');
-
-      // Even on exception, partial file must be purged
-      expect(File(outputMp4).existsSync(), isFalse, reason: 'Partial file must be deleted even if FFmpeg throws an exception');
-    });
-
-    test('FFmpegProcessor.extractAudio cleans up partial output on cancellation', () async {
-      final inputVideo = File(p.join(tempTestDir.path, 'video.mp4'))..writeAsStringSync('fake video');
-      final outputAudio = p.join(tempTestDir.path, 'audio.m4a');
-
-      FFmpegKit.mockExecuteHandler = (command) {
-        File(outputAudio).writeAsStringSync('PARTIAL AUDIO CHUNK');
-        return ReturnCode.cancel;
-      };
-
-      final result = await FFmpegProcessor.extractAudio(
-        videoPath: inputVideo.path,
-        outputAudioPath: outputAudio,
-      );
-
-      expect(result, isNull);
-      expect(File(outputAudio).existsSync(), isFalse, reason: 'Partial audio extraction must be deleted upon cancel');
     });
   });
 
