@@ -32,6 +32,11 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Ensure Android Platform Scaffolding & Wrapper
+        run: |
+          flutter create . --platforms=android --org=com.zeroo
+          git checkout android/app/src/main/AndroidManifest.xml || true
+
       - name: Install Dependencies
         run: flutter pub get
 
