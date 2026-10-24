@@ -1,4 +1,4 @@
-# ZALL v1.0.0 — Official Release Notes
+# ZALL v1.0.1 — Official Release Notes
 
 <p align="center">
   <b>ZALL: High-Performance Standalone On-Device Media Extractor & Downloader for Android (8.0 – 15+)</b><br>
@@ -7,120 +7,60 @@
 
 ---
 
-## Release Overview
+## What's New in v1.0.1
 
-We are proud to announce the official release of **ZALL v1.0.0** (All-in-One Media Downloader) for Android.
-
-All release binaries have been built with 4-byte zip alignment and signed deterministically using **APK Signature Scheme v1 (JAR signing)** and **v2 (Full APK Signing)**. This explicit dual-scheme signing resolves physical device installation issues ("invalid package" / package parse error) across all Android versions (Android 8.0 Oreo through Android 15+) and custom vendor ROMs (MIUI/HyperOS, ColorOS, OneUI).
+- 🎨 **Official Custom App Icon**: Fully integrated new high-definition brand icon across all Android densities (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`) and **Adaptive Icons** (`mipmap-anydpi-v26`) for modern Android devices (Samsung One UI, Pixel Launcher, Xiaomi HyperOS, ColorOS).
+- 🛡️ **Dual-Scheme Signing & 4KB Page-Alignment**: Re-aligned all release APKs with `zipalign -p -f 4` (page-aligning uncompressed native `.so` libraries to 4096 bytes) and deterministically signed using **APK Signature Scheme v1 (JAR signing)** and **v2 (Full APK Signing)**.
+- ⚡ **Resolution of "Aplikasi Tidak Valid" (Package Parse & Update Errors)**:
+  - Upgraded build version code to `versionCode: 2` (`v1.0.1+2`).
+  - Standardized AndroidManifest resources (`ic_launcher` and `ic_launcher_round`).
+  - Added clear guidance for users upgrading from previous test builds.
 
 ---
 
 ## Direct 1-Click Download Links
 
-Download the binary package tailored to your device processor:
+Pilih dan unduh paket APK sesuai spesifikasi perangkat Android Anda:
 
-| Binary Package | Target CPU Architecture | File Size | Recommended Use Case |
+| Binary Package | Target CPU Architecture | Ukuran File | Rekomendasi Penggunaan |
 | :--- | :--- | :--- | :--- |
-| [**`app-arm64-v8a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-arm64-v8a-release.apk) | ARM 64-bit (`arm64-v8a`) | ~28 MB | **Highly Recommended.** The optimal choice for 95%+ of modern Android phones (released 2017 or newer). |
-| [**`app-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-release.apk) | Universal (FAT Multi-ABI) | ~75 MB | **Fail-Safe Choice.** Compatible with all Android devices. Select this if you are uncertain about your device CPU. |
-| [**`app-armeabi-v7a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-armeabi-v7a-release.apk) | ARM 32-bit (`armeabi-v7a`) | ~26 MB | Dedicated to legacy 32-bit Android phones. |
-| [**`app-x86_64-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-x86_64-release.apk) | x86_64 (`x86_64`) | ~30 MB | Dedicated to desktop Android emulators (BlueStacks, LDPlayer, Nox, Android Studio AVD) and x86 Android OS. |
-| [**`SHA256SUMS.txt`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/SHA256SUMS.txt) | SHA-256 Checksums | ~1 KB | Official cryptographic hash manifest for verifying binary integrity and authenticity. |
+| [**`app-arm64-v8a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.1/app-arm64-v8a-release.apk) | ARM 64-bit (`arm64-v8a`) | ~28 MB | **SANGAT DIREKOMENDASIKAN.** Pilihan tercepat dan terbaik untuk 95%+ HP Android modern (keluaran 2018 ke atas seperti Samsung, Xiaomi, Oppo, Vivo, Realme, Poco, Infinix, Pixel). |
+| [**`app-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.1/app-release.apk) | Universal (FAT Multi-ABI) | ~75 MB | **Pilihan Universal.** Kompatibel dengan semua jenis prosesor Android. Pilih jika Anda tidak tahu jenis prosesor HP Anda. |
+| [**`app-armeabi-v7a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.1/app-armeabi-v7a-release.apk) | ARM 32-bit (`armeabi-v7a`) | ~26 MB | Khusus untuk HP Android lawas (32-bit / rilis sebelum 2017). |
+| [**`app-x86_64-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.1/app-x86_64-release.apk) | x86_64 (`x86_64`) | ~30 MB | Khusus untuk emulator Android di PC (BlueStacks, LDPlayer, Nox, AVD). |
+| [**`SHA256SUMS.txt`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.1/SHA256SUMS.txt) | SHA-256 Checksums | ~1 KB | Berkas verifikasi integritas checksum kriptografis. |
 
 ---
 
-## Decision Matrix: "Which APK Should I Download?"
+## PENTING: Cara Mengatasi "Aplikasi Tidak Valid" Saat Instalasi
 
-| Device Situation / Question | APK to Select |
-| :--- | :--- |
-| Your smartphone was purchased between 2018 and the present (Samsung, Xiaomi, Vivo, Oppo, Realme, Infinix, Pixel, Poco, etc.)? | **`app-arm64-v8a-release.apk`** |
-| You do not know your processor architecture and want an APK guaranteed to install on any device? | **`app-release.apk`** |
-| Your smartphone is an older model (released before 2017) or runs an entry-level 32-bit operating system? | **`app-armeabi-v7a-release.apk`** |
-| You are running Android inside a desktop PC emulator (Windows, Mac, or Linux)? | **`app-x86_64-release.apk`** |
+Jika HP Anda memunculkan notifikasi *"Aplikasi tidak valid"*, *"Paket tampaknya tidak valid"*, atau *"Aplikasi tidak terpasang"*:
 
-> **Quick Hardware Verification**: Install a free utility such as **Inware** or **AIDA64** from Google Play, then check **SoC / System -> Instruction Set**. If it reports `arm64-v8a` or `aarch64`, download **`app-arm64-v8a-release.apk`**.
-
----
-
-## Step-by-Step Installation & Security Walkthrough
-
-Because this APK is installed outside the Google Play Store (*sideloading*), Android displays standard security authorization prompts:
-
-1. **Download the APK**: Tap one of the download links above (recommended: `app-arm64-v8a-release.apk`) using your mobile web browser.
-2. **Open the Package**: Once the download completes, tap the download notification or locate the APK in your **Downloads / Files** app.
-3. **Unknown Sources Prompt**:
-   - If a prompt appears stating: *"For your security, your phone is not allowed to install unknown apps from this source"*:
-   - Tap **Settings**.
-   - Toggle **Allow from this source** to **ON**.
-   - Tap the **Back** navigation button.
-4. **Google Play Protect Prompt**:
-   - If a dialog appears stating *"Blocked by Play Protect"* or *"Unrecognized App"*:
-   - Tap **More details** (or the small expandable drop-down arrow).
-   - Tap **Install anyway**.
-5. **Complete Installation**:
-   - Tap **Install**.
-   - Wait a few seconds for the package installer to finish, then tap **Open**.
+1. **HAPUS (UNINSTALL) APLIKASI LAMA TERLEBIH DAHULU**:
+   - Jika di HP Anda sebelumnya sudah terpasang aplikasi ZALL versi lama (v1.0.0 atau versi uji coba):
+   - **Wajib copot pemasangan (Uninstall) aplikasi lama terlebih dahulu** dari `Pengaturan > Aplikasi > ZALL > Hapus Instalan / Copot Pemasangan`.
+   - *Alasan*: Android secara ketat menolak pemasangan (*update*) jika aplikasi lama dipasang dengan sertifikat atau build yang berbeda demi keamanan sistem Anda.
+2. **PASTIKAN MENGUNDUH `app-arm64-v8a-release.apk`**:
+   - Jangan salah mengunduh versi `x86_64` (karena versi ini hanya untuk emulator PC). Untuk HP Android biasa, unduh **`app-arm64-v8a-release.apk`**.
+3. **PASTIKAN UNDUHAN SELESAI 100%**:
+   - Periksa ukuran file di pengelola berkas (*File Manager*). Jika file APK hanya terunduh separuh karena koneksi terputus, Android tidak akan bisa mengurai paket (*corrupted APK*).
+4. **IZINKAN SUMBER TIDAK DIKENAL**:
+   - Buka `Pengaturan > Keamanan / Privasi > Instal Aplikasi Tidak Dikenal` -> Aktifkan untuk browser (Chrome/Brave) atau File Manager yang Anda gunakan.
+5. **JIKA MUNCUL GOOGLE PLAY PROTECT**:
+   - Klik **"Detail selengkapnya"** (*More details*), lalu pilih **"Tetap instal"** (*Install anyway*).
 
 ---
 
-## Device Installation Troubleshooting & Conflict Resolution
+## Fitur Unggulan ZALL v1.0.1
 
-If your device encounters an installation failure, consult the troubleshooting resolutions below:
-
-### Resolving Signature Conflict (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`)
-- **Symptom**: The installer reports *"App not installed"* or *"Package conflicts with an existing package by the same name"*.
-- **Cause**: Android enforces cryptographic security: you cannot install a release APK over an existing debug or pre-release version signed with a different key.
-- **Fix**:
-  1. Uninstall the existing Universal Media Downloader app completely (`Settings > Apps > Universal Media Downloader > Uninstall`).
-  2. If using Samsung Secure Folder, Xiaomi Second Space, or Android Work Profile, ensure the app is deleted from those spaces as well.
-  3. Clear the Package Installer cache: `Settings > Apps > Show System Apps > Package Installer > Storage > Clear Cache`.
-  4. Tap the downloaded v1.0.0 APK to install cleanly.
-
-### Resolving "Invalid Package" on Custom Android ROMs
-- **Symptom**: MIUI, HyperOS, or ColorOS displays *"Invalid Package"* or *"Failed to parse package"*.
-- **Cause**: AGP 8+ builds historically omitted JAR Signature Scheme v1, causing older package installers or customized vendor package parsers to reject the APK.
-- **Fix**: Release v1.0.0 binaries are explicitly dual-signed with both Scheme v1 (JAR) and Scheme v2 (Full APK), verified using `apksigner`. Ensure you download official binaries from the v1.0.0 release assets.
-
----
-
-## Key Features & Highlights
-
-- **100% On-Device Standalone Architecture**: No scraping backend or proxy servers. Network connections establish directly with official platform content delivery networks.
-- **Android Share Sheet Integration (`ACTION_SEND`)**: Download directly from social media applications by tapping **Share** -> selecting **Universal Downloader**.
-- **Pixiv Ugoira-to-MP4 Assembly**: Unpacks original Ugoira ZIP frames, reads exact delay metadata, and compiles them into an H.264 MP4 video via an embedded FFmpeg demuxer engine, with guaranteed instant cleanup of temporary frames (Zero Orphaned Files).
-- **Comprehensive Platform Coverage**:
-  - **YouTube**: 1080p Full HD, 720p HD, pure M4A/AAC audio extraction, Shorts, and Live stream support.
-  - **Pixiv**: Original master illustrations, multi-page manga albums, and animated Ugoira works.
-  - **Pinterest**: Master original images (`/originals/`), MP4 pin videos, `pin.it` shortlinks, and worldwide ccTLDs.
-  - **Twitter / X**: Original master photos and highest bitrate MP4 videos via high-speed syndication endpoints.
-  - **TikTok**: HD watermark-free video downloads and photo slideshow extraction.
-  - **Instagram**: Reels, feed videos, and photo carousels with safe CDN fallback mechanisms.
-- **Structured Storage Hierarchy**: Files are saved to `/storage/emulated/0/Download/Media/<Platform>/<Creator>/...` with adaptive subfolders for multi-page works and automatic file migration.
-- **Clean Cancellation Management**: In-progress `.part` and `.tmp` files are immediately purged if a download is cancelled or interrupted.
-- **Instant MediaStore Indexing**: Integrated native `MediaScannerConnection` triggers instant visibility in Android Gallery and Google Photos.
-- **Local Cookie Vault**: Encrypted on-device storage for account session cookies (`PHPSESSID`, `auth_token`, `sessionid`) for authenticated and age-restricted downloads.
-
----
-
-## SHA-256 Checksum Verification Instructions
-
-You can verify the cryptographic integrity of your downloaded APK to ensure it has not been corrupted or tampered with:
-
-### Verification on Linux / macOS / WSL
-```bash
-# Verify all APK files against the checksum manifest
-sha256sum -c SHA256SUMS.txt
-```
-
-### Verification on Windows (PowerShell)
-```powershell
-# Compute the SHA-256 checksum for the downloaded APK
-Get-FileHash -Algorithm SHA256 app-arm64-v8a-release.apk
-Get-FileHash -Algorithm SHA256 app-release.apk
-```
-
-### Verification on Android Devices
-You can check hashes directly on your Android device using **Hash Checker** (from Google Play) or inside **Termux**:
-```bash
-sha256sum app-arm64-v8a-release.apk
-```
+- 🌟 **Desain Antarmuka Dark Blue Modern**: Mengikuti standar UI ZALL dengan warna Dark Blue `#141417`, Surface Card `#202129`, dan aksen Blue `#3B82F6` dengan font Poppins.
+- 🖼️ **Media Preview Bottom Sheet**: Tinjau judul media, thumbnail visual, informasi pembuat, dan durasi sebelum memulai proses pengunduhan.
+- 📦 **Multi-Media & Album Batch Download**:
+  - **Pixiv**: Mendukung ilustrasi tunggal, album manga multi-halaman, dan animasi Ugoira (otomatis dikonversi ke MP4 H.264 via FFmpeg).
+  - **Instagram**: Mendukung Reels, postingan video, dan carousel multi-foto.
+  - **Pinterest**: Mengunduh foto resolusi asli (`/originals/`) dan video Pin MP4 kualitas tinggi.
+  - **Twitter / X**: Mengunduh video bitrate tertinggi dan galeri multi-foto tanpa crash.
+  - **TikTok**: Video HD tanpa tanda air (*no watermark*).
+  - **YouTube**: Video 1080p, 720p, Shorts, dan audio M4A/AAC murni.
+- 🔐 **Cookie Vault Terintegrasi**: Pengaturan terenkripsi lokal untuk memasukkan sesi cookie (`PHPSESSID`, `auth_token`, `sessionid`) bagi unduhan konten yang memerlukan login.
+- 📂 **Penyimpanan Terstruktur**: Disimpan rapi di `/storage/emulated/0/Download/Media/<Platform>/<Kreator>/` dan langsung terindeks di Galeri HP.

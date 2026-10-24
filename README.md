@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/zeroo-crypto/universal-media-downloader-android/actions/workflows/build_apk.yml"><img src="https://github.com/zeroo-crypto/universal-media-downloader-android/actions/workflows/build_apk.yml/badge.svg" alt="Build & Release APK"></a>
-  <a href="https://github.com/zeroo-crypto/universal-media-downloader-android/releases/tag/v1.0.0"><img src="https://img.shields.io/github/v/release/zeroo-crypto/universal-media-downloader-android?color=blue&label=Release" alt="GitHub Release"></a>
+  <a href="https://github.com/zeroo-crypto/universal-media-downloader-android/releases/tag/v1.0.1"><img src="https://img.shields.io/github/v/release/zeroo-crypto/universal-media-downloader-android?color=blue&label=Release" alt="GitHub Release"></a>
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.1.0%2B-02569B?logo=flutter" alt="Flutter"></a>
   <a href="https://developer.android.com"><img src="https://img.shields.io/badge/Android-8.0%20to%2015%2B%20(API%2024--35)-3DDC84?logo=android" alt="Android"></a>
   <a href="#android-permissions-specification"><img src="https://img.shields.io/badge/Permissions-Scoped%20Storage-informational" alt="Permissions"></a>
@@ -30,7 +30,7 @@
 ---
 
 ## Table of Contents
-1. [Direct 1-Click Download Links (v1.0.0)](#direct-1-click-download-links-v100)
+1. [Direct 1-Click Download Links (v1.0.1)](#direct-1-click-download-links-v101)
 2. [APK Architecture Decision Matrix](#apk-architecture-decision-matrix)
 3. [Standalone On-Device Architecture](#standalone-on-device-architecture)
 4. [Architecture Breakdown & Code Structure](#architecture-breakdown--code-structure)
@@ -44,17 +44,17 @@
 
 ---
 
-## Direct 1-Click Download Links (v1.0.0)
+## Direct 1-Click Download Links (v1.0.1)
 
-All official release binaries are 4-byte zip-aligned and cryptographically dual-signed with **APK Signature Scheme v1 (JAR signing)** and **v2 (Full APK Signing)** to guarantee flawless installation across physical devices running Android 8.0 (API 24) through Android 15+ (API 35):
+All official release binaries are 4-byte zip-aligned, page-aligned (4KB for native shared libraries), and cryptographically dual-signed with **APK Signature Scheme v1 (JAR signing)** and **v2 (Full APK Signing)** to guarantee flawless installation across physical devices running Android 8.0 (API 24) through Android 15+ (API 35):
 
 | Binary Package | Target CPU Architecture | File Size | Recommendation |
 | :--- | :--- | :--- | :--- |
-| [**`app-arm64-v8a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-arm64-v8a-release.apk) | ARM 64-bit (`arm64-v8a`) | ~28 MB | **Highly Recommended.** Best performance and smallest footprint for 95%+ of modern smartphones (2017+). |
-| [**`app-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-release.apk) | Universal (Multi-ABI FAT) | ~75 MB | **Fail-Safe Choice.** Bundles C++ libraries for all CPU types. Works on any device if you are unsure of your CPU. |
-| [**`app-armeabi-v7a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-armeabi-v7a-release.apk) | ARM 32-bit (`armeabi-v7a`) | ~26 MB | Dedicated to older legacy or entry-level 32-bit smartphones. |
-| [**`app-x86_64-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-x86_64-release.apk) | x86_64 (`x86_64`) | ~30 MB | Dedicated to PC Android Emulators (BlueStacks, LDPlayer, Nox, Android Studio AVD) and Android x86 laptops. |
-| [**`SHA256SUMS.txt`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/SHA256SUMS.txt) | SHA-256 Checksum Manifest | ~1 KB | Official cryptographic hash manifest for binary tamper detection and integrity verification. |
+| [**`app-arm64-v8a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.1/app-arm64-v8a-release.apk) | ARM 64-bit (`arm64-v8a`) | ~28 MB | **Highly Recommended.** Best performance and smallest footprint for 95%+ of modern smartphones (2017+). |
+| [**`app-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.1/app-release.apk) | Universal (Multi-ABI FAT) | ~75 MB | **Fail-Safe Choice.** Bundles C++ libraries for all CPU types. Works on any device if you are unsure of your CPU. |
+| [**`app-armeabi-v7a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.1/app-armeabi-v7a-release.apk) | ARM 32-bit (`armeabi-v7a`) | ~26 MB | Dedicated to older legacy or entry-level 32-bit smartphones. |
+| [**`app-x86_64-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.1/app-x86_64-release.apk) | x86_64 (`x86_64`) | ~30 MB | Dedicated to PC Android Emulators (BlueStacks, LDPlayer, Nox, Android Studio AVD) and Android x86 laptops. |
+| [**`SHA256SUMS.txt`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.1/SHA256SUMS.txt) | SHA-256 Checksum Manifest | ~1 KB | Official cryptographic hash manifest for binary tamper detection and integrity verification. |
 
 ---
 

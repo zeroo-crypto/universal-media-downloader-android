@@ -56,14 +56,16 @@ jobs:
 
       - name: Sign Release APKs with apksigner (Dual-Scheme v1 + v2)
         run: |
-          # Dynamically locate apksigner from Android SDK build-tools
+          # Dynamically locate apksigner and zipalign from Android SDK build-tools
           BUILD_TOOLS_DIR=$(find "${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort -V | tail -n 1)
           if [ -n "$BUILD_TOOLS_DIR" ] && [ -f "$BUILD_TOOLS_DIR/apksigner" ]; then
             export PATH="$BUILD_TOOLS_DIR:$PATH"
           fi
 
           APKSIGNER=$(command -v apksigner || echo "$BUILD_TOOLS_DIR/apksigner")
+          ZIPALIGN=$(command -v zipalign || echo "$BUILD_TOOLS_DIR/zipalign")
           echo "Using apksigner binary: $APKSIGNER"
+          echo "Using zipalign binary:  $ZIPALIGN"
           "$APKSIGNER" --version
 
           KEYSTORE="android/app/release.keystore"
@@ -80,6 +82,10 @@ jobs:
 
           for apk in "${TARGET_APKS[@]}"; do
             echo "------------------------------------------------------------"
+            echo "Page-aligning (4KB) & 4-byte zipaligning $apk..."
+            "$ZIPALIGN" -p -f 4 "$apk" "${apk}.aligned"
+            mv "${apk}.aligned" "$apk"
+
             echo "Signing $apk with Dual-Scheme (v1 + v2)..."
             "$APKSIGNER" sign \
               --ks "$KEYSTORE" \
@@ -93,6 +99,9 @@ jobs:
 
             echo "Verifying signature schemes for $apk..."
             "$APKSIGNER" verify --verbose "$apk"
+
+            echo "Verifying 4-byte alignment after signing..."
+            "$ZIPALIGN" -c -v 4 "$apk"
           done
 
       - name: Verify APK Quality Gate
@@ -121,8 +130,8 @@ jobs:
       - name: Publish to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0
-          name: "ZALL v1.0.0 (Release)"
+          tag_name: v1.0.1
+          name: "ZALL v1.0.1 (Release)"
           body_path: RELEASE_NOTES.md
           draft: false
           prerelease: false
