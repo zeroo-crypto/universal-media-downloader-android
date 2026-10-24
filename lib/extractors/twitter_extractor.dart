@@ -18,7 +18,7 @@ class TwitterExtractor implements BaseExtractor {
   Future<MediaMetadata> extract(String url, {String? cookieToken}) async {
     final match = _urlRegex.firstMatch(url);
     if (match == null) {
-      throw Exception('Format tautan X / Twitter tidak valid: $url');
+      throw Exception('Invalid X / Twitter URL format (Format tautan X / Twitter tidak valid): $url');
     }
 
     final screenName = match.group(1) ?? 'i';
