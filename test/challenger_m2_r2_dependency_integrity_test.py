@@ -151,8 +151,9 @@ def test_4_manifest_namespace_cleanliness():
 
 def test_5_git_diff_scope_containment():
     print("\n--- [Test 5] Git Diff Scope Containment Audit ---")
+    # Check git diff either in current working tree or across latest commit
     diff_output = subprocess.check_output(
-        ['git', 'diff', '--name-only'],
+        ['git', 'diff', 'HEAD~1', '--name-only'],
         universal_newlines=True
     )
     modified_files = set(filter(None, diff_output.strip().splitlines()))

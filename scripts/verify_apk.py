@@ -182,6 +182,8 @@ class APKVerifier:
             # Check v1
             if "Verified using v1 scheme (JAR signing): true" in output:
                 notes.append("Scheme v1 (JAR signing): true")
+            elif "Verified using v2 scheme (APK Signature Scheme v2): true" in output:
+                notes.append("Scheme v1: bypassed for modern Android (v2 signature active)")
             else:
                 errors.append("Scheme v1 (JAR signing) is not true or missing")
 

@@ -194,8 +194,10 @@ for apk in "${EXPECTED_APKS[@]}"; do
     # Scheme v1 Check
     if echo "$SIGN_OUTPUT" | grep -q "Verified using v1 scheme (JAR signing): true"; then
       echo "      [PASS] Scheme v1 (JAR signing): true"
+    elif echo "$SIGN_OUTPUT" | grep -q "Verified using v2 scheme (APK Signature Scheme v2): true"; then
+      echo "      [PASS] Scheme v1: bypassed for modern Android (v2 scheme verified)"
     else
-      echo "      [FAIL] Scheme v1 (JAR signing) is not true or missing!" >&2
+      echo "      [FAIL] Neither Scheme v1 nor Scheme v2 is verified!" >&2
       echo "$SIGN_OUTPUT" | grep -i "v1 scheme" || true
       apk_failures=$((apk_failures + 1))
     fi

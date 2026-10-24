@@ -88,6 +88,7 @@ jobs:
               --key-pass "$KEY_PASS" \
               --v1-signing-enabled true \
               --v2-signing-enabled true \
+              --min-sdk-version 21 \
               "$apk"
 
             echo "Verifying signature schemes for $apk..."
