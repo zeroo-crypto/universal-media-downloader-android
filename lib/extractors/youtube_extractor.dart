@@ -82,7 +82,7 @@ class YouTubeExtractor implements BaseExtractor {
       final muxedStreams = manifest.muxed.sortByVideoQuality();
       for (final s in muxedStreams) {
         final qName = s.videoQuality.name.toLowerCase();
-        String label = 'Video MP4 (${s.videoQuality.label})';
+        String label = 'Video MP4 (${s.qualityLabel})';
         if (qName.contains('720')) {
           label = '720p HD (MP4 Video + Audio)';
         } else if (qName.contains('480')) {
