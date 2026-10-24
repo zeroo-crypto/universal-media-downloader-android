@@ -196,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildTopAppBar() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.between,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // "ZA" ExtraBold, "LL" Light
         RichText(

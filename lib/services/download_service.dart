@@ -270,7 +270,7 @@ class DownloadService extends ChangeNotifier {
               streamUrl.contains('/reels/') ||
               streamUrl.contains('/tv/')) &&
           !streamUrl.contains('/media/')) {
-        throw ExtractorException(
+        throw Exception(
           'Tidak ada tautan media langsung untuk Instagram (${task.metadata.workId}). Diperlukan sessionid Cookie di Pengaturan.',
         );
       }

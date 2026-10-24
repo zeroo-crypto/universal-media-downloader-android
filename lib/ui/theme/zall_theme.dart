@@ -44,7 +44,7 @@ class ZallTheme {
         onSurface: textPrimary,
         onBackground: textPrimary,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: cardSurface,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -84,7 +84,7 @@ class ZallTheme {
           fontWeight: FontWeight.bold,
         ),
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: const Color(0xFF1C1D26),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24.0),
