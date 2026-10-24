@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/platforms.dart';
 import '../../extractors/base_extractor.dart';
+import '../../services/language_service.dart';
 import '../theme/zall_theme.dart';
 
 class MediaPreviewSheet extends StatefulWidget {
@@ -69,7 +70,6 @@ class _MediaPreviewSheetState extends State<MediaPreviewSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final streams = widget.metadata.streams;
     final isMulti = widget.metadata.isMultiPage || streams.length > 1;
     final platformColor = _getPlatformColor(widget.metadata.platform);
@@ -206,7 +206,7 @@ class _MediaPreviewSheetState extends State<MediaPreviewSheet> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Kreator: ${widget.metadata.creatorName}',
+                      '${context.tr('preview_creator')}${widget.metadata.creatorName}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -224,7 +224,7 @@ class _MediaPreviewSheetState extends State<MediaPreviewSheet> {
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          '${streams.length} Item Media (Album)',
+                          '${streams.length} ${context.tr('preview_items_count')}',
                           style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -249,9 +249,9 @@ class _MediaPreviewSheetState extends State<MediaPreviewSheet> {
 
           // Quality / Resolution Dropdown (if more than 1 stream option)
           if (streams.length > 1) ...[
-            const Text(
-              'Pilih Kualitas / Format:',
-              style: TextStyle(
+            Text(
+              context.tr('preview_choose_format'),
+              style: const TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -301,7 +301,7 @@ class _MediaPreviewSheetState extends State<MediaPreviewSheet> {
               child: ElevatedButton.icon(
                 icon: const Icon(Icons.file_download_done, color: Colors.white),
                 label: Text(
-                  'Unduh Semua (${streams.length} Media)',
+                  '${context.tr('preview_download_all')} (${streams.length})',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -322,7 +322,7 @@ class _MediaPreviewSheetState extends State<MediaPreviewSheet> {
               ),
             ),
             const SizedBox(height: 10),
-            // Single Download "Unduh Pilihan Ini"
+            // Single Download "Unduh Item Pilihan Saja"
             SizedBox(
               width: double.infinity,
               height: 44,
@@ -339,9 +339,9 @@ class _MediaPreviewSheetState extends State<MediaPreviewSheet> {
                         Navigator.pop(context);
                         widget.onDownloadSingle(_selectedStream!);
                       },
-                child: const Text(
-                  'Unduh Item Pilihan Saja',
-                  style: TextStyle(
+                child: Text(
+                  context.tr('preview_download_single'),
+                  style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: ZallTheme.highlightBlue,
@@ -356,9 +356,9 @@ class _MediaPreviewSheetState extends State<MediaPreviewSheet> {
               height: 48,
               child: ElevatedButton.icon(
                 icon: const Icon(Icons.download, color: Colors.white),
-                label: const Text(
-                  'Unduh Sekarang',
-                  style: TextStyle(
+                label: Text(
+                  context.tr('preview_download_now'),
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,

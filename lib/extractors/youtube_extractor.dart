@@ -28,6 +28,12 @@ class YouTubeExtractor implements BaseExtractor {
     }
 
     final yt = YoutubeExplode();
+    final ytHeaders = {
+      'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+      'Referer': 'https://www.youtube.com/',
+    };
+
     try {
       final video = await yt.videos.get(videoId);
       final title = video.title;
@@ -36,40 +42,78 @@ class YouTubeExtractor implements BaseExtractor {
 
       final manifest = await yt.videos.streamsClient.getManifest(videoId);
       final streams = <MediaStreamItem>[];
+      final seenQualities = <String>{};
 
-      // 1. Muxed streams (Video + Audio combined in single MP4)
-      final muxedStreams = manifest.muxed.sortByVideoQuality();
-      for (final s in muxedStreams) {
-        final qName = s.videoQuality.name;
-        streams.add(MediaStreamItem(
-          url: s.url.toString(),
-          qualityLabel: '$qName MP4 (Video + Audio)',
-          extension: 'mp4',
-        ));
+      // 1. Locate Best Audio Stream (for standalone audio and DASH muxing)
+      final audioStreams = manifest.audioOnly.where((s) => s.container.name.toLowerCase() == 'mp4').sortByBitrate();
+      final bestAudio = audioStreams.isNotEmpty ? audioStreams.last : (manifest.audioOnly.isNotEmpty ? manifest.audioOnly.sortByBitrate().last : null);
+      final bestAudioUrl = bestAudio?.url.toString();
+
+      // 2. High-res video DASH streams (1080p Full HD, 1440p 2K, 2160p 4K) paired with Audio
+      if (bestAudioUrl != null) {
+        final highResVideo = manifest.videoOnly.where((s) => s.container.name.toLowerCase() == 'mp4').sortByVideoQuality();
+        for (final s in highResVideo) {
+          final qName = s.videoQuality.name.toLowerCase();
+          String? label;
+          if (qName.contains('2160') || qName.contains('4k')) {
+            label = '4K Ultra HD 2160p (MP4 Video + Audio)';
+          } else if (qName.contains('1440') || qName.contains('2k')) {
+            label = '2K Quad HD 1440p (MP4 Video + Audio)';
+          } else if (qName.contains('1080')) {
+            label = '1080p Full HD (MP4 Video + Audio)';
+          }
+
+          if (label != null && !seenQualities.contains(label)) {
+            seenQualities.add(label);
+            streams.add(MediaStreamItem(
+              url: s.url.toString(),
+              qualityLabel: label,
+              extension: 'mp4',
+              headers: ytHeaders,
+              audioTrackUrl: bestAudioUrl,
+              requiresMuxing: true,
+              fileSize: s.size.totalBytes,
+            ));
+          }
+        }
       }
 
-      // 2. High-res video only (1080p, 1440p, 4K)
-      final videoOnly = manifest.videoOnly.where((s) => s.container.name.toLowerCase() == 'mp4').sortByVideoQuality();
-      for (final s in videoOnly) {
-        final qName = s.videoQuality.name;
-        if (qName.contains('1080') || qName.contains('1440') || qName.contains('2160')) {
+      // 3. Pre-muxed streams (720p HD, 360p SD)
+      final muxedStreams = manifest.muxed.sortByVideoQuality();
+      for (final s in muxedStreams) {
+        final qName = s.videoQuality.name.toLowerCase();
+        String label = 'Video MP4 (${s.videoQuality.label})';
+        if (qName.contains('720')) {
+          label = '720p HD (MP4 Video + Audio)';
+        } else if (qName.contains('480')) {
+          label = '480p SD (MP4 Video + Audio)';
+        } else if (qName.contains('360')) {
+          label = '360p Standar (MP4 Video + Audio)';
+        }
+
+        if (!seenQualities.contains(label)) {
+          seenQualities.add(label);
           streams.add(MediaStreamItem(
             url: s.url.toString(),
-            qualityLabel: '$qName Full HD (Video)',
+            qualityLabel: label,
             extension: 'mp4',
+            headers: ytHeaders,
+            fileSize: s.size.totalBytes,
+            requiresMuxing: false,
           ));
         }
       }
 
-      // 3. Audio only (HQ M4A / AAC)
-      final audioStreams = manifest.audioOnly.where((s) => s.container.name.toLowerCase() == 'mp4').sortByBitrate();
-      if (audioStreams.isNotEmpty) {
-        final bestAudio = audioStreams.last;
+      // 4. Standalone Audio stream (HQ M4A)
+      if (bestAudio != null) {
+        final bitrateKbps = bestAudio.bitrate.kiloBitsPerSecond.round();
         streams.add(MediaStreamItem(
           url: bestAudio.url.toString(),
-          qualityLabel: 'Audio Saja (M4A / ${bestAudio.bitrate.kiloBitsPerSecond.round()} kbps)',
+          qualityLabel: 'Audio Saja (M4A / $bitrateKbps kbps)',
           extension: 'm4a',
+          headers: ytHeaders,
           isAudioOnly: true,
+          fileSize: bestAudio.size.totalBytes,
         ));
       }
 

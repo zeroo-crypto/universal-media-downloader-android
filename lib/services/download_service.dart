@@ -53,7 +53,17 @@ class DownloadTask {
 
 class DownloadService extends ChangeNotifier {
   final List<DownloadTask> _tasks = [];
-  final Dio _dio = Dio();
+  final Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 60),
+      headers: const {
+        'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        'Accept': '*/*',
+      },
+    ),
+  );
 
   List<DownloadTask> get tasks => List.unmodifiable(_tasks);
 
@@ -322,7 +332,74 @@ class DownloadService extends ChangeNotifier {
         return;
       }
 
-      // 3. Standard Direct File / Video Streaming
+      // 3. Special Handler for YouTube DASH Muxing (Separate Video + Audio tracks)
+      if (task.selectedStream.requiresMuxing &&
+          task.selectedStream.audioTrackUrl != null &&
+          task.selectedStream.audioTrackUrl!.isNotEmpty) {
+        task.status = DownloadStatus.downloading;
+        _updateNotification('Mengunduh Track Video HD...', task.metadata.title, 0.2);
+
+        final videoPart = '$destinationPath.video.part';
+        final audioPart = '$destinationPath.audio.part';
+
+        // 3a. Download Video Track
+        await _dio.download(
+          task.selectedStream.url,
+          videoPart,
+          options: Options(headers: task.selectedStream.headers),
+          cancelToken: task.cancelToken,
+          onReceiveProgress: (received, total) {
+            task.receivedBytes = received;
+            task.totalBytes = total;
+            task.progress = total > 0 ? (received / total) * 0.65 : 0.0;
+            notifyListeners();
+          },
+        );
+
+        // 3b. Download Audio Track
+        _updateNotification('Mengunduh Track Audio...', task.metadata.title, 0.7);
+        await _dio.download(
+          task.selectedStream.audioTrackUrl!,
+          audioPart,
+          options: Options(headers: task.selectedStream.headers),
+          cancelToken: task.cancelToken,
+          onReceiveProgress: (received, total) {
+            task.progress = total > 0 ? 0.65 + ((received / total) * 0.15) : 0.65;
+            notifyListeners();
+          },
+        );
+
+        // 3c. Mux Video + Audio tracks using local FFmpeg demuxer
+        task.status = DownloadStatus.processing;
+        _updateNotification('Menggabungkan Video & Audio (FFmpeg)...', task.metadata.title, 0.85);
+        notifyListeners();
+
+        final muxedFile = await FFmpegProcessor.muxVideoAudio(
+          videoPath: videoPart,
+          audioPath: audioPart,
+          outputPath: destinationPath,
+        );
+
+        // Zero Orphaned Files: purge temporary track files immediately
+        final vF = File(videoPart);
+        if (await vF.exists()) await vF.delete();
+        final aF = File(audioPart);
+        if (await aF.exists()) await aF.delete();
+
+        if (muxedFile != null && await muxedFile.exists()) {
+          task.status = DownloadStatus.completed;
+          task.progress = 1.0;
+          _updateNotification('Unduhan Selesai', task.metadata.title, 1.0);
+          await scanMediaFile(destinationPath);
+        } else {
+          throw Exception('Gagal menggabungkan stream video dan audio (FFmpeg).');
+        }
+
+        notifyListeners();
+        return;
+      }
+
+      // 4. Standard Direct File / Video Streaming
       await _dio.download(
         task.selectedStream.url,
         partFilePath,

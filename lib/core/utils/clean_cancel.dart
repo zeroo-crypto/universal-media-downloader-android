@@ -10,6 +10,8 @@ class CleanCancel {
     '.crdownload',
     '.ytdl',
     '.download',
+    '.video.part',
+    '.audio.part',
   ];
 
   /// Cleans up a specific target file and any related .part/.tmp temporary files

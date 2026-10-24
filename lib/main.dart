@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'services/download_service.dart';
+import 'services/language_service.dart';
 import 'services/share_intent_service.dart';
 import 'ui/theme/zall_theme.dart';
 import 'ui/screens/home_screen.dart';
@@ -35,6 +36,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => DownloadService()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
       ],
       child: const ZallApp(),
     ),
@@ -86,9 +88,12 @@ class _ZallAppState extends State<ZallApp> {
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = context.watch<LanguageProvider>();
+
     return MaterialApp(
       title: 'ZALL',
       debugShowCheckedModeBanner: false,
+      locale: languageProvider.currentLocale,
       theme: ZallTheme.darkTheme,
       darkTheme: ZallTheme.darkTheme,
       themeMode: ThemeMode.dark,

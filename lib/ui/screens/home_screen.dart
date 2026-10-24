@@ -6,7 +6,9 @@ import '../../core/constants/platforms.dart';
 import '../../extractors/base_extractor.dart';
 import '../../extractors/extractor_registry.dart';
 import '../../services/download_service.dart';
+import '../../services/language_service.dart';
 import '../theme/zall_theme.dart';
+import '../widgets/official_brand_icons.dart';
 import '../widgets/zall_illustrations.dart';
 import '../widgets/media_preview_sheet.dart';
 import 'gallery_screen.dart';
@@ -57,10 +59,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (data != null && data.text != null && data.text!.isNotEmpty) {
       final text = data.text!.trim();
       _urlController.text = text;
-      _showToast('Link berhasil ditempel dari clipboard');
+      _showToast(context.tr('toast_paste_ok'));
       _analyzeUrl(text);
     } else {
-      _showToast('Clipboard kosong');
+      _showToast(context.tr('toast_clipboard_empty'));
     }
   }
 
@@ -80,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _analyzeUrl(String url) async {
     final cleanUrl = url.trim();
     if (cleanUrl.isEmpty) {
-      _showToast('Silakan masukkan link terlebih dahulu');
+      _showToast(context.tr('toast_link_empty'));
       return;
     }
 
@@ -104,12 +106,12 @@ class _HomeScreenState extends State<HomeScreen> {
         metadata: metadata,
         onDownloadSingle: (stream) {
           downloadService.enqueueDownload(metadata, stream);
-          _showToast('Memulai unduhan: ${metadata.title}');
+          _showToast('${context.tr('toast_starting_download')}${metadata.title}');
           _urlController.clear();
         },
         onDownloadAll: (streams) {
           downloadService.enqueueBatchDownload(metadata, streams);
-          _showToast('Memulai unduh semua (${streams.length} media)');
+          _showToast('${context.tr('toast_starting_batch')} (${streams.length})');
           _urlController.clear();
         },
       );
@@ -119,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = false;
         _errorMessage = e.toString().replaceAll('Exception: ', '');
       });
-      _showToast('Gagal menganalisis link: $_errorMessage');
+      _showToast('${context.tr('toast_analysis_failed')}$_errorMessage');
     }
   }
 
@@ -146,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildTopAppBar(),
               const SizedBox(height: 18),
 
-              // Hero Section: "Semua Bisa, Satu Aplikasi!" + 3D Blue Folder Illustration
+              // Hero Section
               _buildHeroSection(),
               const SizedBox(height: 22),
 
@@ -229,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // Galeri Icon Button
             IconButton(
               icon: const Icon(Icons.grid_view_rounded, color: Colors.white, size: 24),
-              tooltip: 'Buka Galeri',
+              tooltip: 'Galeri',
               onPressed: () {
                 Navigator.push(
                   context,
@@ -241,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // Pengaturan Icon Button
             IconButton(
               icon: const Icon(Icons.settings_outlined, color: Colors.white, size: 24),
-              tooltip: 'Buka Pengaturan',
+              tooltip: 'Pengaturan',
               onPressed: () {
                 Navigator.push(
                   context,
@@ -265,8 +267,8 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RichText(
-                text: const TextSpan(
-                  style: TextStyle(
+                text: TextSpan(
+                  style: const TextStyle(
                     fontSize: 24,
                     height: 1.25,
                     fontWeight: FontWeight.w800,
@@ -274,18 +276,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     letterSpacing: -0.5,
                   ),
                   children: [
-                    TextSpan(text: 'Semua Bisa,\nSatu '),
+                    TextSpan(text: context.tr('hero_title_1')),
                     TextSpan(
-                      text: 'Aplikasi!',
-                      style: TextStyle(color: ZallTheme.primaryBlue),
+                      text: context.tr('hero_title_2'),
+                      style: const TextStyle(color: ZallTheme.primaryBlue),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Tak perlu repot ganti-ganti aplikasi. Cukup satu ketukan untuk mengunduh.',
-                style: TextStyle(
+              Text(
+                context.tr('hero_subtitle'),
+                style: const TextStyle(
                   fontSize: 12.5,
                   height: 1.5,
                   color: ZallTheme.textSecondary,
@@ -346,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: _urlController,
                   style: const TextStyle(fontSize: 13.5, color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Tempel link di sini...',
+                    hintText: context.tr('input_hint'),
                     hintStyle: const TextStyle(color: Color(0xFF7D7E8A), fontSize: 13.5),
                     border: InputBorder.none,
                     isDense: true,
@@ -462,13 +464,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Divider(color: ZallTheme.dividerColor.withOpacity(0.7), height: 1),
           const SizedBox(height: 12),
 
-          // Supported Platforms Row (6 exact platforms)
+          // Supported Platforms Row (6 exact official vector badges)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Platform yang Didukung',
-                style: TextStyle(
+              Text(
+                context.tr('supported_platforms'), // Platform yang Didukung
+                style: const TextStyle(
                   fontSize: 11.5,
                   color: ZallTheme.textSecondary,
                 ),
@@ -476,71 +478,39 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 children: [
                   // 1. YouTube
-                  _buildPlatformBadge(
-                    color: ZallTheme.youtubeRed,
-                    child: const Icon(Icons.play_arrow, size: 13, color: Colors.white),
-                    onTap: () => _onPlatformBadgeTap('YouTube', 'https://youtu.be/dQw4w9WgXcQ'),
+                  _buildBrandBadge(
+                    platform: 'YouTube',
+                    sampleUrl: 'https://youtu.be/dQw4w9WgXcQ',
                   ),
                   const SizedBox(width: 6),
                   // 2. Pixiv
-                  _buildPlatformBadge(
-                    color: ZallTheme.pixivBlue,
-                    child: const Text(
-                      'P',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w900,
-                        fontStyle: FontStyle.italic,
-                        color: Colors.white,
-                      ),
-                    ),
-                    onTap: () => _onPlatformBadgeTap('Pixiv', 'https://www.pixiv.net/en/artworks/118940215'),
+                  _buildBrandBadge(
+                    platform: 'Pixiv',
+                    sampleUrl: 'https://www.pixiv.net/en/artworks/118940215',
                   ),
                   const SizedBox(width: 6),
                   // 3. Instagram
-                  _buildPlatformBadge(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFDBA74), Color(0xFFE1306C), Color(0xFF833AB4)],
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                    ),
-                    child: const Icon(Icons.camera_alt_outlined, size: 12, color: Colors.white),
-                    onTap: () => _onPlatformBadgeTap('Instagram', 'https://www.instagram.com/reel/C9xYz789/'),
+                  _buildBrandBadge(
+                    platform: 'Instagram',
+                    sampleUrl: 'https://www.instagram.com/reel/C9xYz789/',
                   ),
                   const SizedBox(width: 6),
                   // 4. Pinterest
-                  _buildPlatformBadge(
-                    color: ZallTheme.pinterestRed,
-                    child: const Text(
-                      'P',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    onTap: () => _onPlatformBadgeTap('Pinterest', 'https://pin.it/7kLmN9pQr'),
+                  _buildBrandBadge(
+                    platform: 'Pinterest',
+                    sampleUrl: 'https://pin.it/7kLmN9pQr',
                   ),
                   const SizedBox(width: 6),
                   // 5. TikTok
-                  _buildPlatformBadge(
-                    color: ZallTheme.tiktokBlack,
-                    child: const Icon(Icons.music_note, size: 13, color: Colors.white),
-                    onTap: () => _onPlatformBadgeTap('TikTok', 'https://vt.tiktok.com/ZSY9aBcDe/'),
+                  _buildBrandBadge(
+                    platform: 'TikTok',
+                    sampleUrl: 'https://vt.tiktok.com/ZSY9aBcDe/',
                   ),
                   const SizedBox(width: 6),
                   // 6. X / Twitter
-                  _buildPlatformBadge(
-                    color: ZallTheme.twitterBlack,
-                    child: const Text(
-                      '𝕏',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    onTap: () => _onPlatformBadgeTap('Twitter/X', 'https://x.com/techdaily/status/184920194821'),
+                  _buildBrandBadge(
+                    platform: 'Twitter/X',
+                    sampleUrl: 'https://x.com/techdaily/status/184920194821',
                   ),
                 ],
               ),
@@ -551,32 +521,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildPlatformBadge({
-    Color? color,
-    Gradient? gradient,
-    required Widget child,
-    required VoidCallback onTap,
+  Widget _buildBrandBadge({
+    required String platform,
+    required String sampleUrl,
   }) {
     return InkWell(
-      onTap: onTap,
+      onTap: () => _onPlatformBadgeTap(platform, sampleUrl),
       borderRadius: BorderRadius.circular(14),
-      child: Container(
-        width: 28,
-        height: 28,
-        decoration: BoxDecoration(
-          color: color,
-          gradient: gradient,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Center(child: child),
-      ),
+      child: OfficialBrandIcon(platform: platform, size: 28),
     );
   }
 
@@ -588,9 +540,9 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Baru Diunduh',
-              style: TextStyle(
+            Text(
+              context.tr('recent_downloads'),
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -601,9 +553,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   TextButton(
                     onPressed: () => downloadService.clearAllCompleted(),
-                    child: const Text(
-                      'Hapus Semua',
-                      style: TextStyle(color: Color(0xFFEF4444), fontSize: 12),
+                    child: Text(
+                      context.tr('clear_all'),
+                      style: const TextStyle(
+                        color: Color(0xFFEF4444),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   TextButton(
@@ -613,12 +569,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(builder: (_) => const GalleryScreen()),
                       );
                     },
-                    child: const Text(
-                      'Lihat Galeri >',
-                      style: TextStyle(
+                    child: Text(
+                      context.tr('view_gallery'),
+                      style: const TextStyle(
                         color: ZallTheme.primaryBlue,
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -628,30 +584,28 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(height: 12),
 
-        // Empty State vs Populated Tasks
         if (tasks.isEmpty)
+          // Empty State
           Row(
             children: [
-              // 3D Blue Inbox Tray
-              const EmptyInboxIllustration(size: 110),
+              const EmptyInboxIllustration(size: 85),
               const SizedBox(width: 14),
-              // Empty State Text
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Belum Ada Unduhan',
-                      style: TextStyle(
-                        fontSize: 16,
+                      context.tr('no_downloads'),
+                      style: const TextStyle(
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      'Tidak ada file yang ditemukan. Coba unduh dulu, ya!',
-                      style: TextStyle(
+                      context.tr('no_downloads_desc'),
+                      style: const TextStyle(
                         fontSize: 12.5,
                         height: 1.4,
                         color: ZallTheme.textSecondary,

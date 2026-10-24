@@ -7,6 +7,8 @@ class MediaStreamItem {
   final Map<String, String> headers;
   final bool isAudioOnly;
   final int? fileSize;
+  final String? audioTrackUrl;
+  final bool requiresMuxing;
 
   MediaStreamItem({
     required this.url,
@@ -15,6 +17,8 @@ class MediaStreamItem {
     this.headers = const {},
     this.isAudioOnly = false,
     this.fileSize,
+    this.audioTrackUrl,
+    this.requiresMuxing = false,
   });
 }
 

@@ -59,25 +59,39 @@ class TikTokExtractor implements BaseExtractor {
     final streams = <MediaStreamItem>[];
     MediaType type = MediaType.video;
 
+    final tiktokHeaders = {
+      'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+      'Referer': 'https://www.tiktok.com/',
+    };
+
+    String resolveUrl(String? u) {
+      if (u == null || u.isEmpty) return '';
+      if (u.startsWith('http://') || u.startsWith('https://')) return u;
+      if (u.startsWith('//')) return 'https:$u';
+      return 'https://www.tikwm.com$u';
+    }
+
     // Check for Photo Slideshow (data['images'])
     final imagesList = data['images'] as List?;
     if (imagesList != null && imagesList.isNotEmpty) {
       type = MediaType.album;
       for (int i = 0; i < imagesList.length; i++) {
-        final imgUrl = imagesList[i].toString();
+        final imgUrl = resolveUrl(imagesList[i].toString());
         if (imgUrl.isNotEmpty) {
           streams.add(MediaStreamItem(
             url: imgUrl,
             qualityLabel: 'Foto Slide ${i + 1}/${imagesList.length} (HD)',
             extension: 'jpg',
+            headers: tiktokHeaders,
           ));
         }
       }
     }
 
     // Check for Watermark-Free Video (data['play'])
-    final playUrl = data['play'] as String?;
-    if (playUrl != null && playUrl.isNotEmpty) {
+    final playUrl = resolveUrl(data['play'] as String?);
+    if (playUrl.isNotEmpty) {
       if (streams.isEmpty) type = MediaType.video;
       streams.insert(
         0,
@@ -85,31 +99,35 @@ class TikTokExtractor implements BaseExtractor {
           url: playUrl,
           qualityLabel: 'Video HD Tanpa Watermark (MP4)',
           extension: 'mp4',
+          headers: tiktokHeaders,
         ),
       );
     }
 
     // HD Quality (data['hdplay'])
-    final hdPlayUrl = data['hdplay'] as String?;
-    if (hdPlayUrl != null && hdPlayUrl.isNotEmpty && hdPlayUrl != playUrl) {
+    final hdPlayUrl = resolveUrl(data['hdplay'] as String?);
+    if (hdPlayUrl.isNotEmpty && hdPlayUrl != playUrl) {
       streams.insert(
         0,
         MediaStreamItem(
           url: hdPlayUrl,
           qualityLabel: 'Video Full HD 1080p (MP4)',
           extension: 'mp4',
+          headers: tiktokHeaders,
         ),
       );
     }
 
     // Audio / Music (data['music'])
-    final musicUrl = data['music'] as String?;
-    if (musicUrl != null && musicUrl.isNotEmpty) {
+    final musicUrl = resolveUrl(data['music'] as String?);
+    if (musicUrl.isNotEmpty) {
       streams.add(
         MediaStreamItem(
           url: musicUrl,
           qualityLabel: 'Audio Musik TikTok (MP3)',
           extension: 'mp3',
+          headers: tiktokHeaders,
+          isAudioOnly: true,
         ),
       );
     }

@@ -91,6 +91,38 @@ class FFmpegProcessor {
     } catch (_) {}
   }
 
+  /// Muxes separate DASH video track and audio track into a single high-quality MP4 file.
+  static Future<File?> muxVideoAudio({
+    required String videoPath,
+    required String audioPath,
+    required String outputPath,
+  }) async {
+    try {
+      final command =
+          "-y -i \"$videoPath\" -i \"$audioPath\" -c:v copy -c:a aac -movflags faststart \"$outputPath\"";
+      final session = await FFmpegKit.execute(command);
+      final returnCode = await session.getReturnCode();
+
+      if (ReturnCode.isSuccess(returnCode)) {
+        final outFile = File(outputPath);
+        if (await outFile.exists() && await outFile.length() > 0) {
+          return outFile;
+        }
+      }
+      final partial = File(outputPath);
+      if (await partial.exists()) {
+        await partial.delete();
+      }
+      return null;
+    } catch (_) {
+      final partial = File(outputPath);
+      if (await partial.exists()) {
+        await partial.delete();
+      }
+      return null;
+    }
+  }
+
   /// Extracts audio track (AAC/M4A) from an existing video file
   static Future<File?> extractAudio({
     required String videoPath,

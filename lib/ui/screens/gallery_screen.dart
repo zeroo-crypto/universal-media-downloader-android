@@ -4,6 +4,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/platforms.dart';
 import '../../services/download_service.dart';
+import '../../services/language_service.dart';
 import '../theme/zall_theme.dart';
 import '../widgets/zall_illustrations.dart';
 
@@ -45,19 +46,19 @@ class _GalleryScreenState extends State<GalleryScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1C1D26),
-        title: const Text('Hapus Unduhan?', style: TextStyle(color: Colors.white)),
-        content: const Text(
-          'File ini akan dihapus dari penyimpanan perangkat Anda.',
-          style: TextStyle(color: ZallTheme.textSecondary),
+        title: Text(context.tr('delete_title'), style: const TextStyle(color: Colors.white)),
+        content: Text(
+          context.tr('delete_desc'),
+          style: const TextStyle(color: ZallTheme.textSecondary),
         ),
         actions: [
           TextButton(
-            child: const Text('Batal', style: TextStyle(color: Colors.white70)),
+            child: Text(context.tr('cancel'), style: const TextStyle(color: Colors.white70)),
             onPressed: () => Navigator.pop(ctx),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: const Color(0xFFEF4444)),
-            child: const Text('Hapus'),
+            child: Text(context.tr('delete')),
             onPressed: () {
               Navigator.pop(ctx);
               service.deleteDownloadedFile(taskId);
@@ -94,9 +95,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   if (allTasks.isNotEmpty)
                     TextButton(
                       onPressed: () => downloadService.clearAllCompleted(),
-                      child: const Text(
-                        'Bersihkan Galeri',
-                        style: TextStyle(color: Color(0xFFEF4444), fontSize: 12.5),
+                      child: Text(
+                        context.tr('clean_gallery'),
+                        style: const TextStyle(color: Color(0xFFEF4444), fontSize: 12.5),
                       ),
                     ),
                 ],
@@ -104,9 +105,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
               const SizedBox(height: 10),
 
               // Title: "Galeri"
-              const Text(
-                'Galeri',
-                style: TextStyle(
+              Text(
+                context.tr('gallery_title'),
+                style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -121,7 +122,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _buildFilterChip('all', 'Semua'),
+                      _buildFilterChip('all', context.tr('filter_all')),
                       _buildFilterChip('youtube', 'YouTube'),
                       _buildFilterChip('pixiv', 'Pixiv'),
                       _buildFilterChip('instagram', 'Instagram'),
@@ -190,21 +191,21 @@ class _GalleryScreenState extends State<GalleryScreen> {
         children: [
           const EmptyInboxIllustration(size: 155),
           const SizedBox(height: 20),
-          const Text(
-            'Belum Ada Unduhan',
-            style: TextStyle(
+          Text(
+            context.tr('no_downloads'),
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
           const SizedBox(height: 6),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 40),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Text(
-              'Tidak ada file yang ditemukan. Coba unduh dulu, ya!',
+              context.tr('no_downloads_desc'),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
                 height: 1.5,
                 color: ZallTheme.textMuted,
@@ -308,18 +309,18 @@ class _GalleryScreenState extends State<GalleryScreen> {
           if (isDone && exists) ...[
             IconButton(
               icon: const Icon(Icons.play_circle_fill, color: ZallTheme.primaryBlue, size: 30),
-              tooltip: 'Buka / Putar',
+              tooltip: context.tr('play_open'),
               onPressed: () => OpenFilex.open(task.savedFilePath!),
             ),
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.white54, size: 22),
-              tooltip: 'Hapus File',
+              tooltip: context.tr('delete'),
               onPressed: () => _showDeleteDialog(context, service, task.id),
             ),
           ] else ...[
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.white54, size: 22),
-              tooltip: 'Hapus dari riwayat',
+              tooltip: context.tr('delete'),
               onPressed: () => service.removeTask(task.id),
             ),
           ],
