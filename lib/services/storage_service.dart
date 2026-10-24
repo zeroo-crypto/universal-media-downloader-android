@@ -10,6 +10,11 @@ class DeviceStorageInfo {
   final String usedFormatted;
   final double usedPercentage; // 0.0 to 1.0
 
+  double get percentage => usedPercentage;
+  String get formattedUsed => usedFormatted;
+  String get formattedTotal => totalFormatted;
+  String get formattedAvailable => availableFormatted;
+
   DeviceStorageInfo({
     required this.totalBytes,
     required this.availableBytes,
