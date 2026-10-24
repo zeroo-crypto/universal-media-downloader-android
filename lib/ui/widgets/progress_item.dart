@@ -26,19 +26,19 @@ class ProgressItemWidget extends StatelessWidget {
 
     if (isCompleted) {
       statusColor = Colors.green;
-      statusText = 'Selesai';
+      statusText = 'Completed';
     } else if (isProcessing) {
       statusColor = Colors.amber;
-      statusText = 'Memproses FFmpeg';
+      statusText = 'Processing FFmpeg';
     } else if (isDownloading) {
       statusColor = theme.colorScheme.primary;
-      statusText = 'Mengunduh';
+      statusText = 'Downloading';
     } else if (isCancelled) {
       statusColor = Colors.grey;
-      statusText = 'Dibatalkan';
+      statusText = 'Cancelled';
     } else {
       statusColor = Colors.red;
-      statusText = 'Gagal';
+      statusText = 'Failed';
     }
 
     final speedMb = (task.speedBytesPerSec / (1024 * 1024)).toStringAsFixed(1);
@@ -105,7 +105,7 @@ class ProgressItemWidget extends StatelessWidget {
             if (task.savedFilePath != null) ...[
               const SizedBox(height: 6),
               Text(
-                'Tersimpan di: ${task.savedFilePath}',
+                'Saved to: ${task.savedFilePath}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(fontSize: 10, color: Colors.grey.shade600),
@@ -129,13 +129,13 @@ class ProgressItemWidget extends StatelessWidget {
                 if (isDownloading || isProcessing)
                   TextButton.icon(
                     icon: const Icon(Icons.close, size: 18, color: Colors.red),
-                    label: const Text('Batalkan', style: TextStyle(color: Colors.red)),
+                    label: const Text('Cancel', style: TextStyle(color: Colors.red)),
                     onPressed: onCancel,
                   ),
                 if (isCompleted && task.savedFilePath != null)
                   FilledButton.tonalIcon(
                     icon: const Icon(Icons.folder_open, size: 18),
-                    label: const Text('Buka Berkas'),
+                    label: const Text('Open File'),
                     onPressed: () {
                       OpenFilex.open(task.savedFilePath!);
                     },

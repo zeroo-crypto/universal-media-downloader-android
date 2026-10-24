@@ -334,7 +334,7 @@ void main() {
       expect(unrelatedFile.existsSync(), isTrue, reason: 'Unrelated work in creator root must NOT be moved');
     });
 
-    test('Pinterest: Created Pins MUST stay in creator root folder (DILARANG dipindahkan ke subfolder ID)', () async {
+    test('Pinterest: Created Pins MUST stay in creator root folder (MUST NOT be moved to ID subfolder)', () async {
       final creator = 'CraftArtist_${DateTime.now().microsecondsSinceEpoch}';
 
       // 1. Created pin with explicit isPinterestCreatedPin = true

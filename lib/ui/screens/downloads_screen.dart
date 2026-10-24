@@ -13,7 +13,7 @@ class DownloadsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daftar Unduhan', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Downloads', style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
       ),
       body: tasks.isEmpty
@@ -24,12 +24,12 @@ class DownloadsScreen extends StatelessWidget {
                   Icon(Icons.download_done_outlined, size: 70, color: Colors.grey.shade400),
                   const SizedBox(height: 16),
                   Text(
-                    'Belum Ada Unduhan',
+                    'No Downloads Yet',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey.shade600),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Tempel URL di Beranda atau bagikan dari aplikasi lain',
+                    'Paste a URL on the Home tab or share from another app',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade500),
                   ),
                 ],

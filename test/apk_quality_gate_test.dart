@@ -162,7 +162,7 @@ Signer #1 certificate SHA-256 digest: e3b0c44298fc1c149afbf4c8996fb92427ae41e464
       expect(result.errorMessage, isNull);
     });
 
-    test('Rejects APK lacking v2 signature scheme (causes "aplikasi tidak valid" on Android 11+)', () {
+    test('Rejects APK lacking v2 signature scheme (causes "Invalid Package" parse error on Android 11+)', () {
       const mockLegacyV1OnlyOutput = '''
 Verifies
 Verified using v1 scheme (JAR signing): true

@@ -90,7 +90,7 @@ class HierarchyManager {
     // 1. Platform Pinterest Rules
     if (platform == MediaPlatform.pinterest) {
       if (isPinterestCreatedPin || pinterestBoardName == null || pinterestBoardName.isEmpty) {
-        // Created Pins stay directly in creator root folder (DILARANG dipindahkan ke subfolder ID)
+        // Created Pins stay directly in creator root folder (MUST NOT be moved to ID subfolder)
         return creatorDir;
       } else {
         // Saved Boards stay in subfolder of the board name

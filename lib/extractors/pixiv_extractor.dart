@@ -27,7 +27,7 @@ class PixivExtractor implements BaseExtractor {
   Future<MediaMetadata> extract(String url, {String? cookieToken}) async {
     final illustId = extractIllustId(url);
     if (illustId == null) {
-      throw Exception('Format URL Pixiv tidak valid: $url');
+      throw Exception('Invalid Pixiv URL format: $url');
     }
 
     final headers = <String, String>{
@@ -47,16 +47,16 @@ class PixivExtractor implements BaseExtractor {
     final resp = await http.get(ajaxUrl, headers: headers);
 
     if (resp.statusCode == 404) {
-      throw Exception('Karya Pixiv #$illustId tidak ditemukan atau dihapus.');
+      throw Exception('Pixiv artwork #$illustId not found or deleted.');
     } else if (resp.statusCode == 403) {
-      throw Exception('Akses ditolak (HTTP 403). Silakan periksa atau masukkan Cookie PHPSESSID akun Anda di Pengaturan.');
+      throw Exception('Access denied (HTTP 403). Please verify or enter your account PHPSESSID Cookie in Settings.');
     } else if (resp.statusCode != 200) {
-      throw Exception('Gagal memuat Pixiv API (HTTP ${resp.statusCode}).');
+      throw Exception('Failed to load Pixiv API (HTTP ${resp.statusCode}).');
     }
 
     final data = jsonDecode(resp.body) as Map<String, dynamic>;
     if (data['error'] == true) {
-      throw Exception(data['message'] ?? 'Gagal mengambil metadata Pixiv');
+      throw Exception(data['message'] ?? 'Failed to retrieve Pixiv metadata');
     }
 
     final body = data['body'] as Map<String, dynamic>;

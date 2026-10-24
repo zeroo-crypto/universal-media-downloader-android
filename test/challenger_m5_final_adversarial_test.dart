@@ -140,7 +140,7 @@ void main() {
         await yt.extract('https://www.youtube.com/watch?v=short');
         expect(false, isTrue, reason: 'Expected exception for malformed short YouTube URL');
       } catch (e) {
-        expect(e.toString(), contains('tidak valid'));
+        expect(e.toString(), contains('Invalid'));
       }
 
       final pixiv = PixivExtractor();
@@ -148,7 +148,7 @@ void main() {
         await pixiv.extract('https://www.pixiv.net/artworks/abc');
         expect(false, isTrue, reason: 'Expected exception for malformed Pixiv URL');
       } catch (e) {
-        expect(e.toString(), contains('tidak valid'));
+        expect(e.toString(), contains('Invalid'));
       }
 
       final twitter = TwitterExtractor();
@@ -156,7 +156,7 @@ void main() {
         await twitter.extract('https://x.com/status/123');
         expect(false, isTrue, reason: 'Expected exception for malformed Twitter URL');
       } catch (e) {
-        expect(e.toString(), contains('tidak valid'));
+        expect(e.toString(), contains('Invalid'));
       }
 
       final ig = InstagramExtractor();
@@ -164,7 +164,7 @@ void main() {
         await ig.extract('https://instagram.com/stories/user/123');
         expect(false, isTrue, reason: 'Expected exception for non-media Instagram URL');
       } catch (e) {
-        expect(e.toString(), contains('tidak valid'));
+        expect(e.toString(), contains('Invalid'));
       }
     });
   });

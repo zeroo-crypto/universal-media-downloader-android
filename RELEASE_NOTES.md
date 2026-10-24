@@ -1,132 +1,25 @@
-# Universal Media Downloader v1.0.0 — Release Notes
+# Universal Media Downloader v1.0.0 — Official Release Notes
 
 <p align="center">
-  <b>Standalone On-Device High-Resolution Media Downloader for Android (8.0 – 15+)</b><br>
-  <i>Unduh media resolusi tinggi langsung di ponsel tanpa server perantara.</i>
-</p>
-
-<p align="center">
-  <a href="#bahasa-indonesia"><b>Bahasa Indonesia</b></a> &bull;
-  <a href="#english"><b>English</b></a>
+  <b>High-Performance Standalone On-Device Media Extractor & Downloader for Android (8.0 – 15+)</b><br>
+  <i>Download high-resolution media directly on your Android device without proxy servers, cloud scrapers, or third-party backends.</i>
 </p>
 
 ---
 
-<a name="bahasa-indonesia"></a>
-# Bahasa Indonesia
+## Release Overview
 
-Selamat datang di rilis resmi **Universal Media Downloader v1.0.0** untuk sistem operasi Android. Seluruh berkas biner dalam rilis ini telah dioptimalkan dengan perataan biner 4-byte (*4-byte zip alignment*) dan ditandatangani secara kriptografis menggunakan Skema Tanda Tangan APK v1 (JAR), v2, dan v3 sehingga dapat langsung dipasang tanpa galat *"Aplikasi tidak valid"*.
+We are proud to announce the official release of **Universal Media Downloader v1.0.0** for Android. 
 
----
-
-### Tautan Unduh Langsung
-
-Silakan pilih berkas biner yang sesuai dengan prosesor perangkat Anda:
-
-| Berkas APK | Arsitektur Target | Ukuran File | Rekomendasi Penggunaan |
-| :--- | :--- | :--- | :--- |
-| [**`app-arm64-v8a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-arm64-v8a-release.apk) | ARM 64-bit (`arm64-v8a`) | ~28 MB | **Sangat Direkomendasikan.** Pilihan terbaik untuk 95%+ ponsel Android modern (rilisan 2017 ke atas). |
-| [**`app-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-release.apk) | Universal (FAT Multi-ABI) | ~75 MB | **Pilihan Universal.** Kompatibel dengan semua jenis perangkat Android. Pilih ini jika Anda ragu menentukan jenis CPU ponsel Anda. |
-| [**`app-armeabi-v7a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-armeabi-v7a-release.apk) | ARM 32-bit (`armeabi-v7a`) | ~26 MB | Khusus untuk perangkat Android generasi lama berbasis 32-bit. |
-| [**`app-x86_64-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-x86_64-release.apk) | x86_64 (`x86_64`) | ~30 MB | Khusus untuk Emulator PC (BlueStacks, LDPlayer, Nox, Android Studio AVD) atau laptop Android x86. |
-| [**`SHA256SUMS.txt`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/SHA256SUMS.txt) | Checksum SHA-256 | ~1 KB | Berkas verifikasi integritas kriptografis resmi untuk memastikan berkas tidak rusak atau termodifikasi. |
+All release binaries have been built with 4-byte zip alignment and signed deterministically using **APK Signature Scheme v1 (JAR signing)** and **v2 (Full APK Signing)**. This explicit dual-scheme signing resolves physical device installation issues ("invalid package" / package parse error) across all Android versions (Android 8.0 Oreo through Android 15+) and custom vendor ROMs (MIUI/HyperOS, ColorOS, OneUI).
 
 ---
 
-### Matriks Keputusan: "APK Mana yang Harus Saya Unduh?"
+## Direct 1-Click Download Links
 
-| Pertanyaan / Kondisi Perangkat | APK yang Harus Dipilih |
-| :--- | :--- |
-| Ponsel Anda dibeli antara tahun 2018 hingga sekarang (Samsung, Xiaomi, Vivo, Oppo, Realme, Infinix, Pixel, Poco, dll.)? | **`app-arm64-v8a-release.apk`** |
-| Anda tidak tahu jenis prosesor ponsel Anda dan ingin yang pasti langsung berhasil dipasang? | **`app-release.apk`** |
-| Ponsel Anda model sangat lama (keluaran sebelum 2017) atau berarsitektur 32-bit? | **`app-armeabi-v7a-release.apk`** |
-| Anda menggunakan Emulator Android di komputer Windows/Mac/Linux? | **`app-x86_64-release.apk`** |
+Download the binary package tailored to your device processor:
 
-> **Cara Cepat Mengecek Arsitektur HP**: Pasang aplikasi gratis seperti **Inware** atau **AIDA64** dari Google Play Store, lalu lihat menu **SoC / System -> Instruction Set**. Jika tertera `arm64-v8a` atau `aarch64`, gunakan **`app-arm64-v8a-release.apk`**.
-
----
-
-### Panduan Langkah-demi-Langkah Pemasangan & Peringatan Keamanan
-
-Karena aplikasi ini dipasang di luar Google Play Store (*sideloading*), sistem keamanan Android akan menampilkan dialog konfirmasi keamanan standar:
-
-1. **Unduh Berkas APK**: Ketuk salah satu tautan unduhan di atas (disarankan `app-arm64-v8a-release.apk`) melalui peramban web ponsel Anda.
-2. **Buka Berkas**: Setelah pengunduhan selesai, ketuk notifikasi selesai unduh atau buka berkas dari pengelola berkas (*File Manager / Downloads*).
-3. **Peringatan Sumber Tidak Dikenal (*Unknown Sources*)**:
-   - Jika muncul peringatan *"Demi keamanan, ponsel Anda tidak diizinkan memasang aplikasi dari sumber ini"*:
-   - Ketuk tombol **Setelan / Pengaturan** (*Settings*).
-   - Aktifkan opsi **Izinkan dari sumber ini** (*Allow from this source*).
-   - Tekan tombol **Kembali** (*Back*) pada ponsel Anda.
-4. **Peringatan Google Play Protect**:
-   - Jika muncul jendela dialog *"Aplikasi diblokir oleh Play Protect"* atau *"Aplikasi tidak dikenal / Unrecognized App"*:
-   - Ketuk tulisan **Rincian Lebih Lanjut** (*More details*).
-   - Ketuk tombol **Tetap Pasang** (*Install anyway*).
-5. **Konfirmasi Pemasangan**:
-   - Ketuk tombol **Pasang** (*Install*).
-   - Tunggu proses pemasangan beberapa detik, lalu ketuk **Buka** (*Open*).
-
----
-
-### Ringkasan Fitur Unggulan
-
-- **Arsitektur Mandiri Tanpa Server (100% On-Device)**: Tidak ada data atau tautan yang dikirim ke server perantara. Ekstraksi dan pengunduhan berlangsung langsung antara ponsel dan server CDN resmi.
-- **Integrasi Menu Bagikan (Share Sheet)**: Unduh langsung dari aplikasi media sosial mana pun cukup dengan menekan tombol **Bagikan** (*Share*) -> pilih **Universal Downloader**.
-- **Kompilasi Animasi Pixiv Ugoira ke MP4**: Merakit frame ZIP animasi Pixiv Ugoira menjadi video MP4 berkualitas tinggi secara lokal menggunakan mesin bawaan FFmpeg lengkap dengan durasi delay resmi, serta membersihkan frame sementara seketika tanpa menyisakan sampah penyimpanan.
-- **Dukungan Platform Lengkap**:
-  - **YouTube**: Video Full HD 1080p, 720p, format audio murni M4A/AAC, YouTube Shorts, dan YouTube Live.
-  - **Pixiv**: Ilustrasi master asli, manga/korsel multi-halaman, dan animasi Ugoira.
-  - **Pinterest**: Gambar kualitas original (`/originals/`), video pin MP4, tautan pendek `pin.it`, serta seluruh domain regional dunia.
-  - **Twitter / X**: Foto resolusi master dan video varian bitrate tertinggi via Syndication API.
-  - **TikTok**: Video HD tanpa watermark dan tayangan slide foto (*photo slideshows*).
-  - **Instagram**: Video Reels, postingan video feeds, dan korsel foto dengan perlindungan *safe fallback*.
-- **Hierarki Penyimpanan Teratur**: Disimpan rapi di `/storage/emulated/0/Download/Media/<Platform>/<Kreator>/...` dengan pengelompokan subfolder otomatis untuk karya multi-halaman.
-- **Pembersihan Bersih Saat Pembatalan (Clean Cancel)**: Memusnahkan berkas parsial `.part`, `.tmp`, dan direktori frame sementara seketika jika unduhan dibatalkan atau terputus jaringan.
-- **Pengindeksan Galeri Otomatis**: Integrasi native `MediaScannerConnection` memastikan video dan foto langsung tampil di Galeri ponsel dan Google Photos tanpa perlu me-restart perangkat.
-- **Ruang Simpan Cookie (Cookie Vault)**: Penyimpanan lokal token autentikasi pribadi (`PHPSESSID`, `auth_token`, `sessionid`) untuk mengunduh karya privat atau dengan batasan usia.
-
----
-
-### Instruksi Verifikasi Integritas SHA-256
-
-Anda dapat memverifikasi integritas berkas biner yang Anda unduh untuk memastikan berkas asli dan tidak mengalami kerusakan selama proses unduh:
-
-#### Verifikasi di Linux / macOS / WSL
-```bash
-# Periksa integritas seluruh berkas APK yang ada di folder
-sha256sum -c SHA256SUMS.txt
-```
-
-#### Verifikasi di Windows (PowerShell)
-```powershell
-# Menghitung nilai hash SHA-256 berkas APK
-Get-FileHash -Algorithm SHA256 app-arm64-v8a-release.apk
-Get-FileHash -Algorithm SHA256 app-release.apk
-```
-
-#### Verifikasi di Perangkat Android
-Anda dapat menggunakan aplikasi pemeriksa hash (seperti **Hash Checker** dari Play Store) atau perintah di **Termux**:
-```bash
-sha256sum app-arm64-v8a-release.apk
-```
-
----
-
-<br><br>
-
----
-
-<a name="english"></a>
-# English
-
-Welcome to the official release of **Universal Media Downloader v1.0.0** for Android. All binary packages in this release have undergone strict 4-byte zip alignment and are signed deterministically with APK Signature Scheme v1 (JAR signing), v2, and v3 to guarantee error-free installation across all physical Android devices without encountering *"Aplikasi tidak valid"* (Invalid package) errors.
-
----
-
-### Direct Download Links
-
-Choose the binary artifact corresponding to your device CPU architecture:
-
-| APK Binary | Target Architecture | File Size | Recommended Use Case |
+| Binary Package | Target CPU Architecture | File Size | Recommended Use Case |
 | :--- | :--- | :--- | :--- |
 | [**`app-arm64-v8a-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-arm64-v8a-release.apk) | ARM 64-bit (`arm64-v8a`) | ~28 MB | **Highly Recommended.** The optimal choice for 95%+ of modern Android phones (released 2017 or newer). |
 | [**`app-release.apk`**](https://github.com/zeroo-crypto/universal-media-downloader-android/releases/download/v1.0.0/app-release.apk) | Universal (FAT Multi-ABI) | ~75 MB | **Fail-Safe Choice.** Compatible with all Android devices. Select this if you are uncertain about your device CPU. |
@@ -136,7 +29,7 @@ Choose the binary artifact corresponding to your device CPU architecture:
 
 ---
 
-### Decision Matrix: "Which APK Should I Download?"
+## Decision Matrix: "Which APK Should I Download?"
 
 | Device Situation / Question | APK to Select |
 | :--- | :--- |
@@ -149,7 +42,7 @@ Choose the binary artifact corresponding to your device CPU architecture:
 
 ---
 
-### Step-by-Step Installation & Security Prompt Walkthrough
+## Step-by-Step Installation & Security Walkthrough
 
 Because this APK is installed outside the Google Play Store (*sideloading*), Android displays standard security authorization prompts:
 
@@ -158,7 +51,7 @@ Because this APK is installed outside the Google Play Store (*sideloading*), And
 3. **Unknown Sources Prompt**:
    - If a prompt appears stating: *"For your security, your phone is not allowed to install unknown apps from this source"*:
    - Tap **Settings**.
-   - Toggle **Allow from this source** to ON.
+   - Toggle **Allow from this source** to **ON**.
    - Tap the **Back** navigation button.
 4. **Google Play Protect Prompt**:
    - If a dialog appears stating *"Blocked by Play Protect"* or *"Unrecognized App"*:
@@ -170,9 +63,29 @@ Because this APK is installed outside the Google Play Store (*sideloading*), And
 
 ---
 
-### Key Features Summary
+## Device Installation Troubleshooting & Conflict Resolution
 
-- **100% On-Device Standalone Architecture**: No scraping backend or proxy servers. Network connections establish directly with official content delivery networks.
+If your device encounters an installation failure, consult the troubleshooting resolutions below:
+
+### Resolving Signature Conflict (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`)
+- **Symptom**: The installer reports *"App not installed"* or *"Package conflicts with an existing package by the same name"*.
+- **Cause**: Android enforces cryptographic security: you cannot install a release APK over an existing debug or pre-release version signed with a different key.
+- **Fix**:
+  1. Uninstall the existing Universal Media Downloader app completely (`Settings > Apps > Universal Media Downloader > Uninstall`).
+  2. If using Samsung Secure Folder, Xiaomi Second Space, or Android Work Profile, ensure the app is deleted from those spaces as well.
+  3. Clear the Package Installer cache: `Settings > Apps > Show System Apps > Package Installer > Storage > Clear Cache`.
+  4. Tap the downloaded v1.0.0 APK to install cleanly.
+
+### Resolving "Invalid Package" on Custom Android ROMs
+- **Symptom**: MIUI, HyperOS, or ColorOS displays *"Invalid Package"* or *"Failed to parse package"*.
+- **Cause**: AGP 8+ builds historically omitted JAR Signature Scheme v1, causing older package installers or customized vendor package parsers to reject the APK.
+- **Fix**: Release v1.0.0 binaries are explicitly dual-signed with both Scheme v1 (JAR) and Scheme v2 (Full APK), verified using `apksigner`. Ensure you download official binaries from the v1.0.0 release assets.
+
+---
+
+## Key Features & Highlights
+
+- **100% On-Device Standalone Architecture**: No scraping backend or proxy servers. Network connections establish directly with official platform content delivery networks.
 - **Android Share Sheet Integration (`ACTION_SEND`)**: Download directly from social media applications by tapping **Share** -> selecting **Universal Downloader**.
 - **Pixiv Ugoira-to-MP4 Assembly**: Unpacks original Ugoira ZIP frames, reads exact delay metadata, and compiles them into an H.264 MP4 video via an embedded FFmpeg demuxer engine, with guaranteed instant cleanup of temporary frames (Zero Orphaned Files).
 - **Comprehensive Platform Coverage**:
@@ -189,25 +102,25 @@ Because this APK is installed outside the Google Play Store (*sideloading*), And
 
 ---
 
-### SHA-256 Checksum Verification Instructions
+## SHA-256 Checksum Verification Instructions
 
 You can verify the cryptographic integrity of your downloaded APK to ensure it has not been corrupted or tampered with:
 
-#### Verification on Linux / macOS / WSL
+### Verification on Linux / macOS / WSL
 ```bash
 # Verify all APK files against the checksum manifest
 sha256sum -c SHA256SUMS.txt
 ```
 
-#### Verification on Windows (PowerShell)
+### Verification on Windows (PowerShell)
 ```powershell
 # Compute the SHA-256 checksum for the downloaded APK
 Get-FileHash -Algorithm SHA256 app-arm64-v8a-release.apk
 Get-FileHash -Algorithm SHA256 app-release.apk
 ```
 
-#### Verification on Android Devices
-You can check hashes on your Android device using **Hash Checker** (from Google Play) or inside **Termux**:
+### Verification on Android Devices
+You can check hashes directly on your Android device using **Hash Checker** (from Google Play) or inside **Termux**:
 ```bash
 sha256sum app-arm64-v8a-release.apk
 ```

@@ -195,11 +195,11 @@ def test_direct_download_links():
                 found_artifacts[filename] = found_artifacts.get(filename, 0) + 1
 
         print(f"[{name}] Artifact frequency in links: {found_artifacts}")
-        # Both files should have at least 2 occurrences of each artifact (1 in ID, 1 in EN)
+        # Both files should have at least 1 occurrence of each artifact
         for art in EXPECTED_ARTIFACTS:
             count = found_artifacts.get(art, 0)
-            if count < 2:
-                failures.append(f"[{name}] Artifact '{art}' only linked {count} times (expected >= 2 for mirrored ID/EN)")
+            if count < 1:
+                failures.append(f"[{name}] Artifact '{art}' only linked {count} times (expected >= 1)")
 
     if failures:
         for f in failures:
@@ -277,76 +277,110 @@ def test_documented_commands():
 
 
 # -------------------------------------------------------------
-# TEST SUITE 4: Bilingual Structural Mirroring & Feature Completeness
+# TEST SUITE 4: 100% English Compliance & Zero Indonesian Text
 # -------------------------------------------------------------
-def test_bilingual_structural_mirroring():
-    print("=== SUITE 4: Bilingual Structural Mirroring & Feature Completeness ===")
+def test_english_compliance_and_zero_indonesian():
+    print("=== SUITE 4: 100% English Compliance & Zero Indonesian Text Test ===")
     failures = []
 
-    # Test README.md mirroring
+    # Test README.md
     with open(README_PATH, "r", encoding="utf-8") as f:
         readme = f.read()
 
-    id_match = re.search(r'<a name="bahasa-indonesia"></a>\s*# Bahasa Indonesia(.*?)<a name="english"></a>\s*# English(.*)', readme, re.DOTALL)
-    if not id_match:
-        failures.append("README.md does not have standard <a name='bahasa-indonesia'></a> and <a name='english'></a> section divisions")
-        return False
+    # Must NOT contain bilingual split anchors
+    if '<a name="bahasa-indonesia">' in readme or '# Bahasa Indonesia' in readme:
+        failures.append("README.md contains legacy Bahasa Indonesia section or anchor")
 
-    id_part = id_match.group(1)
-    en_part = id_match.group(2)
-
-    # Check key sections exist in both
+    # Check key English sections exist
     required_sections = [
-        ("Tautan Unduh Cepat", "Quick Download Links"),
-        ("Arsitektur Mandiri Pada Perangkat", "Standalone On-Device Architecture"),
-        ("Platform dan Fitur yang Didukung", "Supported Platforms and Extraction Features"),
-        ("Panduan Penggunaan", "Usage Instructions"),
-        ("Hierarki Penyimpanan", "Storage Hierarchy"),
-        ("Cookie Vault", "Cookie Vault"),
-        ("Matriks Keputusan Arsitektur APK", "APK Architecture Decision Matrix"),
-        ("Panduan Pemasangan Sideloading", "Sideloading Installation Guide"),
-        ("Instruksi Kompilasi & Verifikasi", "Build & Quality Verification"),
+        "Direct 1-Click Download Links (v1.0.0)",
+        "APK Architecture Decision Matrix",
+        "Standalone On-Device Architecture",
+        "Architecture Breakdown & Code Structure",
+        "Supported Platforms & Features",
+        "Android Permissions Specification",
+        "Step-by-Step Sideloading Installation Guide",
+        "Device Installation Troubleshooting & Conflict Resolution",
+        "Storage Hierarchy & File Management",
+        "Cookie Vault Configuration",
+        "Build & Quality Verification Instructions",
     ]
 
-    for id_sec, en_sec in required_sections:
-        if id_sec not in id_part:
-            failures.append(f"README.md Indonesian section missing '{id_sec}'")
-        if en_sec not in en_part:
-            failures.append(f"README.md English section missing '{en_sec}'")
+    for sec in required_sections:
+        if sec not in readme:
+            failures.append(f"README.md missing required English section: '{sec}'")
 
-    # Check platforms covered in both
+    # Check all 6 platforms covered
     platforms = ["YouTube", "Pixiv", "Pinterest", "Twitter", "TikTok", "Instagram"]
     for p in platforms:
-        if p not in id_part:
-            failures.append(f"README.md Indonesian part missing platform '{p}'")
-        if p not in en_part:
-            failures.append(f"README.md English part missing platform '{p}'")
+        if p not in readme:
+            failures.append(f"README.md missing platform '{p}'")
 
-    # Check RELEASE_NOTES.md mirroring
+    # Test RELEASE_NOTES.md
     with open(RELEASE_NOTES_PATH, "r", encoding="utf-8") as f:
         rn = f.read()
 
-    rn_match = re.search(r'<a name="bahasa-indonesia"></a>\s*# Bahasa Indonesia(.*?)<a name="english"></a>\s*# English(.*)', rn, re.DOTALL)
-    if not rn_match:
-        failures.append("RELEASE_NOTES.md does not have standard <a name='bahasa-indonesia'></a> and <a name='english'></a> divisions")
-    else:
-        rn_id = rn_match.group(1)
-        rn_en = rn_match.group(2)
-        for p in platforms:
-            if p not in rn_id:
-                failures.append(f"RELEASE_NOTES.md Indonesian part missing platform '{p}'")
-            if p not in rn_en:
-                failures.append(f"RELEASE_NOTES.md English part missing platform '{p}'")
+    if '<a name="bahasa-indonesia">' in rn or '# Bahasa Indonesia' in rn:
+        failures.append("RELEASE_NOTES.md contains legacy Bahasa Indonesia section or anchor")
 
-        # Check Play Protect and Sideloading instructions in both
-        if "Play Protect" not in rn_id or "Play Protect" not in rn_en:
-            failures.append("RELEASE_NOTES.md missing Play Protect instructions in ID or EN")
+    for p in platforms:
+        if p not in rn:
+            failures.append(f"RELEASE_NOTES.md missing platform '{p}'")
+
+    if "Play Protect" not in rn or "Install anyway" not in rn:
+        failures.append("RELEASE_NOTES.md missing Play Protect instructions")
+
+    if "INSTALL_FAILED_UPDATE_INCOMPATIBLE" not in rn:
+        failures.append("RELEASE_NOTES.md missing signature conflict resolution")
+
+    # Zero Indonesian words audit across both documents
+    indonesian_words = [
+        r"\bunduh\b",
+        r"\bpengunduh\b",
+        r"\bperangkat\b",
+        r"\bponsel\b",
+        r"\bberkas\b",
+        r"\bkreator\b",
+        r"\btanda tangan\b",
+        r"\bsetelan\b",
+        r"\bpengaturan\b",
+        r"\bmemasang\b",
+        r"\bpemasangan\b",
+        r"\blangkah\b",
+        r"\bseluruh\b",
+        r"\bsetelah\b",
+        r"\bhalaman\b",
+        r"\bpilihan\b",
+        r"\bbahasa\b",
+        r"\bpanduan\b",
+        r"\btautan\b",
+        r"\bcepat\b",
+        r"\bmandiri\b",
+        r"\bdidukung\b",
+        r"\bpenggunaan\b",
+        r"\bpembersihan\b",
+        r"\bdimusnahkan\b",
+        r"\btidak valid\b",
+        r"\btidak ditemukan\b",
+    ]
+
+    for name, path in [("README.md", README_PATH), ("RELEASE_NOTES.md", RELEASE_NOTES_PATH)]:
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read()
+        clean = re.sub(r"```[\s\S]*?```", "", content)
+        clean = re.sub(r"`[^`]+`", "", clean)
+        clean = re.sub(r"https?://[^\s\)]+", "", clean)
+
+        for w in indonesian_words:
+            m = re.findall(w, clean, re.IGNORECASE)
+            if m:
+                failures.append(f"{name} contains prohibited Indonesian text '{w}': {m}")
 
     if failures:
         for f in failures:
             print(f"  ❌ FAILURE: {f}")
         return False
-    print("  ✓ Bilingual mirroring and feature parity are complete and verified!\n")
+    print("  ✓ 100% English compliance and zero Indonesian text verified!\n")
     return True
 
 
@@ -356,7 +390,7 @@ def main():
         test_internal_anchor_integrity(),
         test_direct_download_links(),
         test_documented_commands(),
-        test_bilingual_structural_mirroring(),
+        test_english_compliance_and_zero_indonesian(),
     ]
 
     if all(results):

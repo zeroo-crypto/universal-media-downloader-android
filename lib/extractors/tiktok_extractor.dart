@@ -66,7 +66,7 @@ class TikTokExtractor implements BaseExtractor {
       streams: [
         MediaStreamItem(
           url: noWatermarkVideoUrl,
-          qualityLabel: 'HD Video Tanpa Watermark (MP4)',
+          qualityLabel: 'HD Video Without Watermark (MP4)',
           extension: 'mp4',
         ),
       ],

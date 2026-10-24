@@ -31,7 +31,7 @@ class InstagramExtractor implements BaseExtractor {
   Future<MediaMetadata> extract(String url, {String? cookieToken}) async {
     final shortcode = extractShortcode(url);
     if (shortcode == null) {
-      throw ExtractorException('Format URL Instagram tidak valid: $url');
+      throw ExtractorException('Invalid Instagram URL format: $url');
     }
 
     final endpoint = Uri.parse('https://www.instagram.com/p/$shortcode/?__a=1&__d=dis');

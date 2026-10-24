@@ -30,7 +30,7 @@ class ExtractorRegistry {
   static Future<MediaMetadata> extractMedia(String url) async {
     final extractor = findExtractor(url);
     if (extractor == null) {
-      throw Exception('Platform belum didukung atau tautan tidak dikenali: $url');
+      throw Exception('Platform not supported or link not recognized: $url');
     }
 
     final platform = MediaPlatform.detect(url);

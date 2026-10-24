@@ -116,7 +116,7 @@ class DownloadService extends ChangeNotifier {
           CleanCancel.cleanupPartialFile(task.savedFilePath!);
         }
         notifyListeners();
-        _updateNotification('Unduhan Dibatalkan', task.metadata.title, 0.0);
+        _updateNotification('Download Cancelled', task.metadata.title, 0.0);
       }
     } catch (_) {}
   }
@@ -181,14 +181,14 @@ class DownloadService extends ChangeNotifier {
           (streamUrl.contains('/p/') || streamUrl.contains('/reel/') || streamUrl.contains('/reels/') || streamUrl.contains('/tv/')) &&
           !streamUrl.contains('/media/')) {
         throw ExtractorException(
-          'Tidak ada stream video/gambar yang ditemukan untuk Instagram (${task.metadata.workId}). Diperlukan Cookie sessionid pada Pengaturan.',
+          'No video/image stream found for Instagram (${task.metadata.workId}). sessionid Cookie required in Settings.',
         );
       }
 
       // 2. Special Handler for Pixiv Ugoira (ZIP to MP4 assembly)
       if (task.metadata.isUgoira && task.metadata.ugoiraFrames != null) {
         task.status = DownloadStatus.downloading;
-        _updateNotification('Mengunduh Frame Animasi...', task.metadata.title, 0.3);
+        _updateNotification('Downloading Animation Frames...', task.metadata.title, 0.3);
 
         final response = await _dio.get<List<int>>(
           task.selectedStream.url,
@@ -206,7 +206,7 @@ class DownloadService extends ChangeNotifier {
         );
 
         task.status = DownloadStatus.processing;
-        _updateNotification('Menyusun Video MP4 (FFmpeg)...', task.metadata.title, 0.7);
+        _updateNotification('Assembling MP4 Video (FFmpeg)...', task.metadata.title, 0.7);
         notifyListeners();
 
         // Assemble frames via FFmpeg
@@ -219,10 +219,10 @@ class DownloadService extends ChangeNotifier {
         if (mp4File != null && await mp4File.exists()) {
           task.status = DownloadStatus.completed;
           task.progress = 1.0;
-          _updateNotification('Selesai Diunduh (MP4)', task.metadata.title, 1.0);
+          _updateNotification('Download Complete (MP4)', task.metadata.title, 1.0);
           await scanMediaFile(destinationPath);
         } else {
-          throw Exception('Gagal mengompilasi animasi Ugoira menjadi MP4.');
+          throw Exception('Failed to compile Ugoira animation to MP4.');
         }
 
         notifyListeners();
@@ -254,7 +254,7 @@ class DownloadService extends ChangeNotifier {
           final percent = (task.progress * 100).toInt();
 
           _updateNotification(
-            '$percent% ($speedMb MB/s) - Mengunduh',
+            '$percent% ($speedMb MB/s) - Downloading',
             task.metadata.title,
             task.progress,
           );
@@ -269,16 +269,16 @@ class DownloadService extends ChangeNotifier {
         await partFile.rename(destinationPath);
         task.status = DownloadStatus.completed;
         task.progress = 1.0;
-        _updateNotification('Selesai Diunduh', task.metadata.title, 1.0);
+        _updateNotification('Download Complete', task.metadata.title, 1.0);
         await scanMediaFile(destinationPath);
       } else {
-        throw Exception('Berkas unduhan tidak ditemukan setelah selesai.');
+        throw Exception('Downloaded file not found after completion.');
       }
     } catch (e) {
       if (task.status != DownloadStatus.cancelled) {
         task.status = DownloadStatus.failed;
         task.errorMessage = e.toString();
-        _updateNotification('Gagal Mengunduh', task.metadata.title, 0.0);
+        _updateNotification('Download Failed', task.metadata.title, 0.0);
       }
       // Zero Orphaned Files: Clean up partial or empty files
       if (task.savedFilePath != null) {

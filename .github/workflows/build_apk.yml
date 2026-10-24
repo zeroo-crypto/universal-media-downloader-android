@@ -54,6 +54,46 @@ jobs:
           # Restore the staged universal APK so all APK flavors are preserved
           cp staged-apks/app-release.apk build/app/outputs/flutter-apk/app-release.apk
 
+      - name: Sign Release APKs with apksigner (Dual-Scheme v1 + v2)
+        run: |
+          # Dynamically locate apksigner from Android SDK build-tools
+          BUILD_TOOLS_DIR=$(find "${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort -V | tail -n 1)
+          if [ -n "$BUILD_TOOLS_DIR" ] && [ -f "$BUILD_TOOLS_DIR/apksigner" ]; then
+            export PATH="$BUILD_TOOLS_DIR:$PATH"
+          fi
+
+          APKSIGNER=$(command -v apksigner || echo "$BUILD_TOOLS_DIR/apksigner")
+          echo "Using apksigner binary: $APKSIGNER"
+          "$APKSIGNER" --version
+
+          KEYSTORE="android/app/release.keystore"
+          KS_PASS="pass:universal_media_downloader"
+          KEY_ALIAS="universal_media_key"
+          KEY_PASS="pass:universal_media_downloader"
+
+          TARGET_APKS=(
+            "build/app/outputs/flutter-apk/app-release.apk"
+            "build/app/outputs/flutter-apk/app-arm64-v8a-release.apk"
+            "build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk"
+            "build/app/outputs/flutter-apk/app-x86_64-release.apk"
+          )
+
+          for apk in "${TARGET_APKS[@]}"; do
+            echo "------------------------------------------------------------"
+            echo "Signing $apk with Dual-Scheme (v1 + v2)..."
+            "$APKSIGNER" sign \
+              --ks "$KEYSTORE" \
+              --ks-pass "$KS_PASS" \
+              --ks-key-alias "$KEY_ALIAS" \
+              --key-pass "$KEY_PASS" \
+              --v1-signing-enabled true \
+              --v2-signing-enabled true \
+              "$apk"
+
+            echo "Verifying signature schemes for $apk..."
+            "$APKSIGNER" verify --verbose "$apk"
+          done
+
       - name: Verify APK Quality Gate
         run: |
           chmod +x scripts/verify_apk.sh

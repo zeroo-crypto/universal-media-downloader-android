@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.paste),
-            tooltip: 'Tempel dari Clipboard',
+            tooltip: 'Paste from Clipboard',
             onPressed: _pasteFromClipboard,
           ),
         ],
@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     TextField(
                       controller: _urlController,
                       decoration: InputDecoration(
-                        hintText: 'Tempel URL YouTube, Pixiv, Twitter, Pinterest...',
+                        hintText: 'Paste YouTube, Pixiv, Twitter, Pinterest URL...',
                         prefixIcon: const Icon(Icons.link),
                         suffixIcon: _urlController.text.isNotEmpty
                             ? IconButton(
@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           child: OutlinedButton.icon(
                             icon: const Icon(Icons.content_paste),
-                            label: const Text('Tempel Link'),
+                            label: const Text('Paste Link'),
                             onPressed: _pasteFromClipboard,
                           ),
                         ),
@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           child: FilledButton.icon(
                             icon: const Icon(Icons.search),
-                            label: const Text('Periksa URL'),
+                            label: const Text('Analyze URL'),
                             onPressed: _isLoading ? null : () => _analyzeUrl(_urlController.text),
                           ),
                         ),
@@ -163,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // Supported Platforms Horizontal Chips
             Text(
-              'Platform Didukung:',
+              'Supported Platforms:',
               style: theme.textTheme.labelMedium?.copyWith(color: Colors.grey.shade600),
             ),
             const SizedBox(height: 8),
@@ -190,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       CircularProgressIndicator(),
                       SizedBox(height: 12),
-                      Text('Menganalisis konten media...'),
+                      Text('Analyzing media content...'),
                     ],
                   ),
                 ),
@@ -228,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   downloadService.enqueueDownload(_resolvedMetadata!, stream);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Unduhan dimulai: ${_resolvedMetadata!.title}'),
+                      content: Text('Download started: ${_resolvedMetadata!.title}'),
                       behavior: SnackBarBehavior.floating,
                     ),
                   );

@@ -23,7 +23,7 @@ class YouTubeExtractor implements BaseExtractor {
   Future<MediaMetadata> extract(String url, {String? cookieToken}) async {
     final videoId = extractVideoId(url);
     if (videoId == null) {
-      throw Exception('Format URL YouTube tidak valid: $url');
+      throw Exception('Invalid YouTube URL format: $url');
     }
 
     // 1. Fetch metadata via YouTube OEMBED & API
@@ -96,7 +96,7 @@ class YouTubeExtractor implements BaseExtractor {
       // Priority Stream 3: Audio Only (M4A / 160kbps High Quality)
       MediaStreamItem(
         url: streamAudio,
-        qualityLabel: 'Audio Saja (M4A - 160kbps)',
+        qualityLabel: 'Audio Only (M4A - 160kbps)',
         extension: 'm4a',
         isAudioOnly: true,
       ),

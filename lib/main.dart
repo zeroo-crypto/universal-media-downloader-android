@@ -17,7 +17,7 @@ void main() async {
     androidNotificationOptions: AndroidNotificationOptions(
       channelId: 'universal_media_downloader_channel',
       channelName: 'Universal Downloader Service',
-      channelDescription: 'Menampilkan progres unduhan media di latar belakang',
+      channelDescription: 'Displays media download progress in the background',
       channelImportance: NotificationChannelImportance.LOW,
       priority: NotificationPriority.LOW,
     ),
@@ -120,17 +120,17 @@ class _UniversalDownloaderAppState extends State<UniversalDownloaderApp> {
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
               selectedIcon: Icon(Icons.home),
-              label: 'Beranda',
+              label: 'Home',
             ),
             NavigationDestination(
               icon: Icon(Icons.download_outlined),
               selectedIcon: Icon(Icons.download),
-              label: 'Unduhan',
+              label: 'Downloads',
             ),
             NavigationDestination(
               icon: Icon(Icons.settings_outlined),
               selectedIcon: Icon(Icons.settings),
-              label: 'Pengaturan',
+              label: 'Settings',
             ),
           ],
         ),

@@ -18,7 +18,7 @@ class TwitterExtractor implements BaseExtractor {
   Future<MediaMetadata> extract(String url, {String? cookieToken}) async {
     final match = _urlRegex.firstMatch(url);
     if (match == null) {
-      throw Exception('Format URL Twitter/X tidak valid: $url');
+      throw Exception('Invalid Twitter/X URL format: $url');
     }
 
     final creatorScreenName = match.group(1) ?? 'Twitter_User';
@@ -34,7 +34,7 @@ class TwitterExtractor implements BaseExtractor {
     });
 
     if (resp.statusCode != 200) {
-      throw Exception('Tweet tidak ditemukan atau dibatasi (HTTP ${resp.statusCode}).');
+      throw Exception('Tweet not found or restricted (HTTP ${resp.statusCode}).');
     }
 
     final tweet = jsonDecode(resp.body) as Map<String, dynamic>;

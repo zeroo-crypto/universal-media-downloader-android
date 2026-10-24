@@ -174,7 +174,7 @@ void main() {
           await extractor.extract('https://www.pixiv.net/artworks/40404040');
           expect(false, isTrue, reason: 'Expected exception on 404');
         } catch (e) {
-          expect(e.toString(), contains('tidak ditemukan'));
+          expect(e.toString(), contains('not found'));
         }
       }, () => mockClient);
     });
@@ -235,7 +235,7 @@ void main() {
         await extractor.extract('https://youtube.com/invalid_path');
         expect(false, isTrue, reason: 'Expected exception on invalid url');
       } catch (e) {
-        expect(e.toString(), contains('tidak valid'));
+        expect(e.toString(), contains('Invalid'));
       }
     });
   });
@@ -327,7 +327,7 @@ void main() {
           await extractor.extract('https://x.com/user/status/0000000000000000000');
           expect(false, isTrue, reason: 'Expected exception');
         } catch (e) {
-          expect(e.toString(), contains('tidak ditemukan'));
+          expect(e.toString(), contains('not found'));
         }
       }, () => mockClient);
     });

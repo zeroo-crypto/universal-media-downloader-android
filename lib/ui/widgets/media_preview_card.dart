@@ -71,7 +71,7 @@ class _MediaPreviewCardState extends State<MediaPreviewCard> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Text(
-                      'Ugoira Animasi',
+                      'Ugoira Animation',
                       style: TextStyle(fontSize: 11, color: Colors.amber, fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -122,12 +122,12 @@ class _MediaPreviewCardState extends State<MediaPreviewCard> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Tipe: ${widget.metadata.mediaType.label}',
+                        'Type: ${widget.metadata.mediaType.label}',
                         style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
                       ),
                       if (widget.metadata.isMultiPage)
                         Text(
-                          '${widget.metadata.streams.length} Berkas (Album)',
+                          '${widget.metadata.streams.length} Files (Album)',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
@@ -143,7 +143,7 @@ class _MediaPreviewCardState extends State<MediaPreviewCard> {
             // Quality / Stream Selector
             if (widget.metadata.streams.length > 1) ...[
               Text(
-                'Pilihan Kualitas / Format:',
+                'Quality / Format Option:',
                 style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
@@ -174,7 +174,7 @@ class _MediaPreviewCardState extends State<MediaPreviewCard> {
               width: double.infinity,
               child: FilledButton.icon(
                 icon: const Icon(Icons.download),
-                label: const Text('Unduh Sekarang'),
+                label: const Text('Download Now'),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

@@ -15,28 +15,31 @@ dependencies:
   http: ^1.2.1
 
   # Background Services & Notifications
-  flutter_foreground_task: any
-  permission_handler: any
+  flutter_foreground_task: ^8.17.0
+  permission_handler: ^11.3.1
 
   # Android System & Share Sheet Integration
-  receive_sharing_intent: any
-  path_provider: any
-  open_filex: any
+  receive_sharing_intent: ^1.8.1
+  path_provider: ^2.1.5
+  open_filex: ^4.5.0
 
   # Media Processing (FFmpeg for Pixiv Ugoira & Audio)
   ffmpeg_kit_flutter_new: ^4.6.7
-  archive: any
-  mime: any
+  archive: ^3.6.1
+  mime: ^2.1.0
+
+  # File Path & Storage Utilities
+  path: ^1.9.0
 
   # State Management & Local Storage
-  provider: any
-  shared_preferences: any
-  intl: any
+  provider: ^6.1.2
+  shared_preferences: ^2.3.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: any
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true

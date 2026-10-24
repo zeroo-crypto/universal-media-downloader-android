@@ -13,7 +13,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _storagePath = 'Memuat...';
+  String _storagePath = 'Loading...';
   String? _pixivCookie;
   String? _twitterCookie;
   String? _instagramCookie;
@@ -51,7 +51,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Masukkan token sesi (contoh: PHPSESSID untuk Pixiv, auth_token untuk Twitter):',
+              'Enter session token (e.g., PHPSESSID for Pixiv, auth_token for Twitter):',
               style: Theme.of(ctx).textTheme.bodySmall,
             ),
             const SizedBox(height: 10),
@@ -59,7 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller: controller,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Nilai token cookie...',
+                hintText: 'Cookie token value...',
               ),
               maxLines: 2,
             ),
@@ -67,11 +67,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         actions: [
           TextButton(
-            child: const Text('Hapus'),
+            child: const Text('Delete'),
             onPressed: () => Navigator.pop(ctx, ''),
           ),
           FilledButton(
-            child: const Text('Simpan'),
+            child: const Text('Save'),
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
           ),
         ],
@@ -94,7 +94,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Pembersihan selesai: $count berkas sementara (.part/.tmp) dimusnahkan.'),
+          content: Text('Cleanup complete: $count temporary files (.part/.tmp) purged.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -105,20 +105,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pengaturan', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Settings', style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          // Section: Lokasi Penyimpanan
-          Text('Penyimpanan Berkas', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          // Section: Storage Location
+          Text('File Storage', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: ListTile(
               leading: const Icon(Icons.folder, color: Colors.amber),
-              title: const Text('Direktori Media'),
+              title: const Text('Media Directory'),
               subtitle: Text(_storagePath, style: const TextStyle(fontSize: 12)),
               trailing: const Icon(Icons.lock_outline, size: 20),
             ),
@@ -126,7 +126,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 20),
 
           // Section: Cookie Vault
-          Text('Cookie Vault (Akun & Konten Terbatas)', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text('Cookie Vault (Restricted Accounts & Content)', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -135,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ListTile(
                   leading: const Icon(Icons.palette, color: Colors.blue),
                   title: const Text('Pixiv (PHPSESSID)'),
-                  subtitle: Text(_pixivCookie != null ? 'Tersimpan (Aktif)' : 'Belum dipasang (Hanya konten publik)', style: TextStyle(fontSize: 12, color: _pixivCookie != null ? Colors.green : Colors.grey)),
+                  subtitle: Text(_pixivCookie != null ? 'Saved (Active)' : 'Not configured (Public content only)', style: TextStyle(fontSize: 12, color: _pixivCookie != null ? Colors.green : Colors.grey)),
                   trailing: const Icon(Icons.edit, size: 20),
                   onTap: () => _editCookieDialog(MediaPlatform.pixiv, _pixivCookie ?? ''),
                 ),
@@ -143,7 +143,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ListTile(
                   leading: const Icon(Icons.alternate_email, color: Colors.black87),
                   title: const Text('Twitter/X (auth_token)'),
-                  subtitle: Text(_twitterCookie != null ? 'Tersimpan (Aktif)' : 'Belum dipasang', style: TextStyle(fontSize: 12, color: _twitterCookie != null ? Colors.green : Colors.grey)),
+                  subtitle: Text(_twitterCookie != null ? 'Saved (Active)' : 'Not configured', style: TextStyle(fontSize: 12, color: _twitterCookie != null ? Colors.green : Colors.grey)),
                   trailing: const Icon(Icons.edit, size: 20),
                   onTap: () => _editCookieDialog(MediaPlatform.twitter, _twitterCookie ?? ''),
                 ),
@@ -151,7 +151,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ListTile(
                   leading: const Icon(Icons.camera_alt, color: Colors.purple),
                   title: const Text('Instagram (sessionid)'),
-                  subtitle: Text(_instagramCookie != null ? 'Tersimpan (Aktif)' : 'Belum dipasang', style: TextStyle(fontSize: 12, color: _instagramCookie != null ? Colors.green : Colors.grey)),
+                  subtitle: Text(_instagramCookie != null ? 'Saved (Active)' : 'Not configured', style: TextStyle(fontSize: 12, color: _instagramCookie != null ? Colors.green : Colors.grey)),
                   trailing: const Icon(Icons.edit, size: 20),
                   onTap: () => _editCookieDialog(MediaPlatform.instagram, _instagramCookie ?? ''),
                 ),
@@ -160,15 +160,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 20),
 
-          // Section: Kebersihan Berkas
-          Text('Integritas & Pembersihan', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          // Section: File Cleanliness
+          Text('Integrity & Cleanup', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: ListTile(
               leading: const Icon(Icons.cleaning_services, color: Colors.teal),
-              title: const Text('Bersihkan File Sampah (.part / .tmp)'),
-              subtitle: const Text('Memusnahkan semua berkas yang terputus atau 0-byte (Zero Orphaned Files)', style: TextStyle(fontSize: 12)),
+              title: const Text('Purge Temporary Files (.part / .tmp)'),
+              subtitle: const Text('Purge all interrupted or 0-byte files (Zero Orphaned Files)', style: TextStyle(fontSize: 12)),
               onTap: _purgeOrphanedFiles,
             ),
           ),

@@ -8,7 +8,7 @@ def main():
     release_notes_path = root / "RELEASE_NOTES.md"
 
     print("========================================================================")
-    print(" Challenger M5-2: Bilingual Documentation & Integrity Stress Test")
+    print(" Challenger M5-2: 100% English Documentation & Integrity Stress Test")
     print("========================================================================")
 
     if not readme_path.exists():
@@ -21,24 +21,21 @@ def main():
     readme_content = readme_path.read_text(encoding="utf-8")
     release_notes_content = release_notes_path.read_text(encoding="utf-8")
 
-    # 1. Partition README.md into ID and EN
-    assert '<a name="bahasa-indonesia"></a>' in readme_content, "Missing #bahasa-indonesia anchor in README"
-    assert '<a name="english"></a>' in readme_content, "Missing #english anchor in README"
+    # 1. 100% English Integrity & Prohibition of Legacy Bilingual Anchors
+    print("\n--- Test 1: Content Sizing & 100% English Structure ---")
+    assert '<a name="bahasa-indonesia">' not in readme_content, "Found forbidden #bahasa-indonesia anchor in README"
+    assert '<a name="english">' not in readme_content, "Found forbidden #english anchor in README"
+    assert '<a name="bahasa-indonesia">' not in release_notes_content, "Found forbidden #bahasa-indonesia anchor in RELEASE_NOTES"
 
-    readme_parts = readme_content.split('<a name="english"></a>')
-    readme_id = readme_parts[0]
-    readme_en = readme_parts[1]
+    readme_lines = len([l for l in readme_content.splitlines() if l.strip()])
+    rn_lines = len([l for l in release_notes_content.splitlines() if l.strip()])
+    print(f"README.md lines: {readme_lines}, RELEASE_NOTES.md lines: {rn_lines}")
+    assert readme_lines >= 200, f"README too short: {readme_lines} lines"
+    assert rn_lines >= 80, f"RELEASE_NOTES too short: {rn_lines} lines"
+    print("[PASS] Content sizing and 100% English structure verified.")
 
-    print("\n--- Test 1: Content Sizing & Linguistic Parity ---")
-    id_lines = len([l for l in readme_id.splitlines() if l.strip()])
-    en_lines = len([l for l in readme_en.splitlines() if l.strip()])
-    print(f"README.md: ID lines = {id_lines}, EN lines = {en_lines}")
-    assert abs(id_lines - en_lines) <= 25, f"Linguistic disparity too high: {id_lines} vs {en_lines}"
-    print("[PASS] Content sizing and symmetry between ID and EN are well-balanced.")
-
-    # 2. Check Architecture Decision Matrix in both languages
+    # 2. Check Architecture Decision Matrix
     print("\n--- Test 2: Architecture Decision Matrix Verification ---")
-    abis = ["arm64-v8a", "armeabi-v7a", "x86_64", "universal"]
     apk_names = [
         "app-arm64-v8a-release.apk",
         "app-armeabi-v7a-release.apk",
@@ -47,27 +44,26 @@ def main():
     ]
 
     for apk in apk_names:
-        assert apk in readme_id, f"Missing {apk} in Indonesian README"
-        assert apk in readme_en, f"Missing {apk} in English README"
+        assert apk in readme_content, f"Missing {apk} in README"
         assert apk in release_notes_content, f"Missing {apk} in RELEASE_NOTES"
 
-    print(f"[PASS] All {len(apk_names)} target APK binaries documented across both ID and EN.")
+    print(f"[PASS] All {len(apk_names)} target APK binaries documented.")
 
     # 3. Check Sideloading Guidance
     print("\n--- Test 3: Sideloading OS Version Coverage ---")
     os_versions = ["Android 8.0", "11", "Android 13", "15+"]
     for os_v in os_versions:
-        assert os_v in readme_id, f"Missing {os_v} guidance in Indonesian section"
-        assert os_v in readme_en, f"Missing {os_v} guidance in English section"
-    print("[PASS] Step-by-step sideloading guidance present for Android 8 through 15+ in both languages.")
+        assert os_v in readme_content, f"Missing {os_v} guidance in README"
+    assert "8.0" in release_notes_content and "15+" in release_notes_content, "Missing OS version in RELEASE_NOTES"
+    print("[PASS] Step-by-step sideloading guidance present for Android 8 through 15+.")
 
     # 4. Check Platform Extraction Coverage Mention
     print("\n--- Test 4: Platform Features Mention ---")
     platforms = ["YouTube", "Pixiv", "Pinterest", "Twitter", "Instagram", "TikTok"]
     for plat in platforms:
-        assert plat in readme_id, f"Missing {plat} in Indonesian features"
-        assert plat in readme_en, f"Missing {plat} in English features"
-    print(f"[PASS] All {len(platforms)} extraction platforms documented in both languages.")
+        assert plat in readme_content, f"Missing {plat} in README"
+        assert plat in release_notes_content, f"Missing {plat} in RELEASE_NOTES"
+    print(f"[PASS] All {len(platforms)} extraction platforms documented in English.")
 
     # 5. Check Verification Commands & Paths
     print("\n--- Test 5: Build & Verification Tooling Integrity ---")
@@ -79,12 +75,12 @@ def main():
         "SHA256SUMS.txt",
     ]
     for tool in tools:
-        assert tool in readme_id, f"Missing {tool} in Indonesian build instructions"
-        assert tool in readme_en, f"Missing {tool} in English build instructions"
+        assert tool in readme_content, f"Missing {tool} in README"
+    assert "SHA256SUMS.txt" in release_notes_content, "Missing SHA256SUMS.txt in RELEASE_NOTES"
     print("[PASS] Build commands and verification scripts documented accurately.")
 
-    # 6. Check Forbidden Fluff / Stubs
-    print("\n--- Test 6: Stubs, TODOs, and Marketing Fluff Elimination ---")
+    # 6. Check Forbidden Fluff / Stubs / Indonesian Text
+    print("\n--- Test 6: Stubs, Marketing Fluff, and Zero Indonesian Text Elimination ---")
     fluff_terms = [
         "TODO",
         "FIXME",
@@ -99,10 +95,50 @@ def main():
         assert len(matches) == 0, f"Found forbidden placeholder '{fluff}' in README"
         rn_matches = re.findall(rf"\b{re.escape(fluff)}\b", release_notes_content, re.IGNORECASE)
         assert len(rn_matches) == 0, f"Found forbidden placeholder '{fluff}' in RELEASE_NOTES"
-    print("[PASS] Zero placeholders, TODOs, or generic fluff found.")
+
+    # Strict zero Indonesian words check
+    indonesian_words = [
+        r"\bunduh\b",
+        r"\bpengunduh\b",
+        r"\bperangkat\b",
+        r"\bponsel\b",
+        r"\bberkas\b",
+        r"\bkreator\b",
+        r"\btanda tangan\b",
+        r"\bsetelan\b",
+        r"\bpengaturan\b",
+        r"\bmemasang\b",
+        r"\bpemasangan\b",
+        r"\blangkah\b",
+        r"\bseluruh\b",
+        r"\bsetelah\b",
+        r"\bhalaman\b",
+        r"\bpilihan\b",
+        r"\bbahasa\b",
+        r"\bpanduan\b",
+        r"\btautan\b",
+        r"\bcepat\b",
+        r"\bmandiri\b",
+        r"\bdidukung\b",
+        r"\bpenggunaan\b",
+        r"\bpembersihan\b",
+        r"\bdimusnahkan\b",
+        r"\btidak valid\b",
+        r"\btidak ditemukan\b",
+        r"\bdilarang\b",
+    ]
+    for name, content in [("README.md", readme_content), ("RELEASE_NOTES.md", release_notes_content)]:
+        clean = re.sub(r"```[\s\S]*?```", "", content)
+        clean = re.sub(r"`[^`]+`", "", clean)
+        clean = re.sub(r"https?://[^\s\)]+", "", clean)
+        for w in indonesian_words:
+            m = re.findall(w, clean, re.IGNORECASE)
+            assert len(m) == 0, f"{name} contains forbidden Indonesian word '{w}': {m}"
+
+    print("[PASS] Zero placeholders, fluff, and strictly ZERO Indonesian text found.")
 
     print("\n========================================================================")
-    print(" ALL 6 ADVERSARIAL BILINGUAL STRESS TESTS PASSED EMPIRICALLY! (100%)")
+    print(" ALL 6 ADVERSARIAL DOCUMENTATION STRESS TESTS PASSED (100% SUCCESS)!")
     print("========================================================================")
 
 if __name__ == "__main__":
