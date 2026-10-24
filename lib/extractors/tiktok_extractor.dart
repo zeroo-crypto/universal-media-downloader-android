@@ -5,7 +5,7 @@ import 'base_extractor.dart';
 
 class TikTokExtractor implements BaseExtractor {
   static final RegExp _urlRegex = RegExp(
-    r'(?:tiktok\.com\/.*(?:video|photo|\bv\b)\/(\d+)|(?:vt|vm)\.tiktok\.com\/([a-zA-Z0-9]+))',
+    r'(?:tiktok\.com\/.*(?:video|photo|\bv\b)\/(\d+)|(?:vt|vm)\.tiktok\.com\/([a-zA-Z0-9_-]+))',
     caseSensitive: false,
   );
 
@@ -16,16 +16,17 @@ class TikTokExtractor implements BaseExtractor {
 
   @override
   Future<MediaMetadata> extract(String url, {String? cookieToken}) async {
-    // 1. Resolve shortlink if needed
-    var targetUrl = url;
-    if (url.contains('vt.tiktok.com') || url.contains('vm.tiktok.com')) {
+    // 1. Resolve shortlink if needed (vt.tiktok.com, vm.tiktok.com)
+    var targetUrl = url.trim();
+    if (targetUrl.contains('vt.tiktok.com') || targetUrl.contains('vm.tiktok.com')) {
       final client = http.Client();
       try {
-        final req = http.Request('GET', Uri.parse(url))..followRedirects = false;
-        final res = await client.send(req);
+        final req = http.Request('GET', Uri.parse(targetUrl))..followRedirects = false;
+        final res = await client.send(req).timeout(const Duration(seconds: 8));
         if (res.headers.containsKey('location')) {
           targetUrl = res.headers['location']!;
         }
+      } catch (_) {
       } finally {
         client.close();
       }
@@ -34,42 +35,99 @@ class TikTokExtractor implements BaseExtractor {
     final videoIdMatch = RegExp(r'/(?:video|photo)/(\d+)').firstMatch(targetUrl);
     final videoId = videoIdMatch?.group(1) ?? 'TikTok_${DateTime.now().millisecondsSinceEpoch}';
 
-    // 2. Fetch watermark-free stream via mobile TikWM API
+    // 2. Query TikWM API
     final apiUri = Uri.parse('https://www.tikwm.com/api/?url=${Uri.encodeComponent(targetUrl)}');
-    final resp = await http.get(apiUri);
+    final resp = await http.get(apiUri, headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Accept': 'application/json',
+    }).timeout(const Duration(seconds: 12));
 
-    String title = 'TikTok_$videoId';
-    String author = 'TikTok_Creator';
-    String? thumb;
-    String? noWatermarkVideoUrl;
+    if (resp.statusCode != 200) {
+      throw Exception('Gagal menghubungi server TikTok API (HTTP ${resp.statusCode}).');
+    }
 
-    if (resp.statusCode == 200) {
-      final json = jsonDecode(resp.body) as Map<String, dynamic>;
-      if (json['code'] == 0 && json['data'] != null) {
-        final data = json['data'] as Map<String, dynamic>;
-        title = data['title'] ?? title;
-        author = data['author']?['unique_id'] ?? author;
-        thumb = data['cover'];
-        noWatermarkVideoUrl = data['play']; // HD without watermark
+    final json = jsonDecode(resp.body) as Map<String, dynamic>;
+    if (json['code'] != 0 || json['data'] == null) {
+      final msg = json['msg'] ?? 'Video atau foto TikTok tidak ditemukan atau berstatus privat.';
+      throw Exception('TikTok: $msg');
+    }
+
+    final data = json['data'] as Map<String, dynamic>;
+    final rawTitle = (data['title'] ?? 'TikTok_$videoId').toString();
+    final author = (data['author']?['unique_id'] ?? data['author']?['nickname'] ?? 'TikTok_Creator').toString();
+    final thumb = data['cover'] as String?;
+    final streams = <MediaStreamItem>[];
+    MediaType type = MediaType.video;
+
+    // Check for Photo Slideshow (data['images'])
+    final imagesList = data['images'] as List?;
+    if (imagesList != null && imagesList.isNotEmpty) {
+      type = MediaType.album;
+      for (int i = 0; i < imagesList.length; i++) {
+        final imgUrl = imagesList[i].toString();
+        if (imgUrl.isNotEmpty) {
+          streams.add(MediaStreamItem(
+            url: imgUrl,
+            qualityLabel: 'Foto Slide ${i + 1}/${imagesList.length} (HD)',
+            extension: 'jpg',
+          ));
+        }
       }
     }
 
-    noWatermarkVideoUrl ??= targetUrl;
-
-    return MediaMetadata(
-      title: title.length > 50 ? '${title.substring(0, 47)}...' : title,
-      creatorName: author,
-      platform: MediaPlatform.tiktok,
-      mediaType: MediaType.video,
-      workId: videoId,
-      thumbnailUrl: thumb,
-      streams: [
+    // Check for Watermark-Free Video (data['play'])
+    final playUrl = data['play'] as String?;
+    if (playUrl != null && playUrl.isNotEmpty) {
+      if (streams.isEmpty) type = MediaType.video;
+      streams.insert(
+        0,
         MediaStreamItem(
-          url: noWatermarkVideoUrl,
-          qualityLabel: 'HD Video Without Watermark (MP4)',
+          url: playUrl,
+          qualityLabel: 'Video HD Tanpa Watermark (MP4)',
           extension: 'mp4',
         ),
-      ],
+      );
+    }
+
+    // HD Quality (data['hdplay'])
+    final hdPlayUrl = data['hdplay'] as String?;
+    if (hdPlayUrl != null && hdPlayUrl.isNotEmpty && hdPlayUrl != playUrl) {
+      streams.insert(
+        0,
+        MediaStreamItem(
+          url: hdPlayUrl,
+          qualityLabel: 'Video Full HD 1080p (MP4)',
+          extension: 'mp4',
+        ),
+      );
+    }
+
+    // Audio / Music (data['music'])
+    final musicUrl = data['music'] as String?;
+    if (musicUrl != null && musicUrl.isNotEmpty) {
+      streams.add(
+        MediaStreamItem(
+          url: musicUrl,
+          qualityLabel: 'Audio Musik TikTok (MP3)',
+          extension: 'mp3',
+        ),
+      );
+    }
+
+    if (streams.isEmpty) {
+      throw Exception('Tidak ditemukan berkas video atau gambar yang dapat diunduh pada postingan TikTok ini.');
+    }
+
+    final isMulti = streams.length > 1;
+    return MediaMetadata(
+      title: rawTitle.length > 55 ? '${rawTitle.substring(0, 52)}...' : rawTitle,
+      creatorName: author,
+      platform: MediaPlatform.tiktok,
+      mediaType: isMulti ? MediaType.album : type,
+      workId: videoId,
+      thumbnailUrl: thumb,
+      isMultiPage: isMulti,
+      streams: streams,
     );
   }
 }

@@ -32,6 +32,7 @@ class DownloadTask {
   String? savedFilePath;
   String? errorMessage;
   CancelToken cancelToken;
+  DateTime timestamp;
 
   DownloadTask({
     required this.id,
@@ -45,7 +46,9 @@ class DownloadTask {
     this.savedFilePath,
     this.errorMessage,
     CancelToken? cancelToken,
-  }) : cancelToken = cancelToken ?? CancelToken();
+    DateTime? timestamp,
+  })  : cancelToken = cancelToken ?? CancelToken(),
+        timestamp = timestamp ?? DateTime.now();
 }
 
 class DownloadService extends ChangeNotifier {
@@ -54,16 +57,24 @@ class DownloadService extends ChangeNotifier {
 
   List<DownloadTask> get tasks => List.unmodifiable(_tasks);
 
+  List<DownloadTask> get completedTasks =>
+      _tasks.where((t) => t.status == DownloadStatus.completed).toList();
+
   DownloadTask? get activeTask {
     try {
-      return _tasks.firstWhere((t) => t.status == DownloadStatus.downloading || t.status == DownloadStatus.processing);
+      return _tasks.firstWhere(
+        (t) =>
+            t.status == DownloadStatus.downloading ||
+            t.status == DownloadStatus.processing,
+      );
     } catch (_) {
       return null;
     }
   }
 
-  /// Initiates downloading of a media item
-  Future<void> enqueueDownload(MediaMetadata metadata, MediaStreamItem stream) async {
+  /// Initiates downloading of a single media item
+  Future<void> enqueueDownload(
+      MediaMetadata metadata, MediaStreamItem stream) async {
     final taskId = 'task_${DateTime.now().millisecondsSinceEpoch}';
     final task = DownloadTask(
       id: taskId,
@@ -75,6 +86,82 @@ class DownloadService extends ChangeNotifier {
     notifyListeners();
 
     _processQueue();
+  }
+
+  /// Initiates batch downloading of multiple media items (e.g., albums, multi-page manga, carousels)
+  Future<void> enqueueBatchDownload(
+      MediaMetadata metadata, List<MediaStreamItem> streams) async {
+    if (streams.isEmpty) return;
+
+    for (int i = 0; i < streams.length; i++) {
+      final stream = streams[i];
+      final taskId = 'task_${DateTime.now().millisecondsSinceEpoch}_$i';
+      final itemTitle = streams.length > 1
+          ? '${metadata.title} (Bagian ${i + 1}/${streams.length})'
+          : metadata.title;
+
+      final itemMetadata = MediaMetadata(
+        title: itemTitle,
+        creatorName: metadata.creatorName,
+        platform: metadata.platform,
+        mediaType: metadata.mediaType,
+        workId: metadata.workId,
+        thumbnailUrl: metadata.thumbnailUrl,
+        streams: [stream],
+        isMultiPage: metadata.isMultiPage,
+        isUgoira: metadata.isUgoira,
+        ugoiraFrames: metadata.ugoiraFrames,
+        pinterestBoardName: metadata.pinterestBoardName,
+        isPinterestCreatedPin: metadata.isPinterestCreatedPin,
+        extra: metadata.extra,
+      );
+
+      final task = DownloadTask(
+        id: taskId,
+        metadata: itemMetadata,
+        selectedStream: stream,
+      );
+
+      _tasks.insert(0, task);
+    }
+
+    notifyListeners();
+    _processQueue();
+  }
+
+  /// Deletes a downloaded file from storage and removes it from the list
+  Future<void> deleteDownloadedFile(String taskId) async {
+    try {
+      final index = _tasks.indexWhere((t) => t.id == taskId);
+      if (index != -1) {
+        final task = _tasks[index];
+        if (task.savedFilePath != null) {
+          final file = File(task.savedFilePath!);
+          if (await file.exists()) {
+            await file.delete();
+          }
+        }
+        _tasks.removeAt(index);
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error deleting file: $e');
+    }
+  }
+
+  /// Clears all completed, cancelled, or failed tasks
+  void clearAllCompleted() {
+    _tasks.removeWhere((t) =>
+        t.status == DownloadStatus.completed ||
+        t.status == DownloadStatus.cancelled ||
+        t.status == DownloadStatus.failed);
+    notifyListeners();
+  }
+
+  /// Removes a task from the list
+  void removeTask(String taskId) {
+    _tasks.removeWhere((t) => t.id == taskId);
+    notifyListeners();
   }
 
   static const MethodChannel _mediaScannerChannel =
@@ -116,16 +203,16 @@ class DownloadService extends ChangeNotifier {
           CleanCancel.cleanupPartialFile(task.savedFilePath!);
         }
         notifyListeners();
-        _updateNotification('Download Cancelled', task.metadata.title, 0.0);
+        _updateNotification('Unduhan Dibatalkan', task.metadata.title, 0.0);
       }
     } catch (_) {}
   }
 
   Future<void> _processQueue() async {
-    final pending = _tasks.where((t) => t.status == DownloadStatus.queued).toList();
+    final pending =
+        _tasks.where((t) => t.status == DownloadStatus.queued).toList();
     if (pending.isEmpty) return;
 
-    // Check if an existing task is currently running
     if (activeTask != null) return;
 
     final task = pending.first;
@@ -141,7 +228,7 @@ class DownloadService extends ChangeNotifier {
     var lastTime = DateTime.now();
 
     try {
-      // 1. Resolve Destination Directory based on Project Memory Vault Rules
+      // 1. Resolve Destination Directory based on Adaptive Hierarchy Rules
       final targetDir = await HierarchyManager.resolveDestinationDirectory(
         platform: task.metadata.platform,
         creatorName: task.metadata.creatorName,
@@ -164,7 +251,7 @@ class DownloadService extends ChangeNotifier {
       task.savedFilePath = destinationPath;
       final partFilePath = '$destinationPath.part';
 
-      // Eliminate silent HTML download: throw ExtractorException if trying to download webpage HTML
+      // Guard: Eliminate silent HTML download for Instagram
       final streamUrl = task.selectedStream.url.toLowerCase();
       final streamUri = Uri.tryParse(streamUrl);
       final streamHost = streamUri?.host.toLowerCase() ?? '';
@@ -178,17 +265,21 @@ class DownloadService extends ChangeNotifier {
           streamUrl.startsWith('https://m.instagram.com/') ||
           streamUrl.startsWith('http://m.instagram.com/');
       if (isInstagram &&
-          (streamUrl.contains('/p/') || streamUrl.contains('/reel/') || streamUrl.contains('/reels/') || streamUrl.contains('/tv/')) &&
+          (streamUrl.contains('/p/') ||
+              streamUrl.contains('/reel/') ||
+              streamUrl.contains('/reels/') ||
+              streamUrl.contains('/tv/')) &&
           !streamUrl.contains('/media/')) {
         throw ExtractorException(
-          'No video/image stream found for Instagram (${task.metadata.workId}). sessionid Cookie required in Settings.',
+          'Tidak ada tautan media langsung untuk Instagram (${task.metadata.workId}). Diperlukan sessionid Cookie di Pengaturan.',
         );
       }
 
       // 2. Special Handler for Pixiv Ugoira (ZIP to MP4 assembly)
       if (task.metadata.isUgoira && task.metadata.ugoiraFrames != null) {
         task.status = DownloadStatus.downloading;
-        _updateNotification('Downloading Animation Frames...', task.metadata.title, 0.3);
+        _updateNotification(
+            'Mengunduh Frame Animasi...', task.metadata.title, 0.3);
 
         final response = await _dio.get<List<int>>(
           task.selectedStream.url,
@@ -206,7 +297,8 @@ class DownloadService extends ChangeNotifier {
         );
 
         task.status = DownloadStatus.processing;
-        _updateNotification('Assembling MP4 Video (FFmpeg)...', task.metadata.title, 0.7);
+        _updateNotification(
+            'Menyusun Video MP4 (FFmpeg)...', task.metadata.title, 0.7);
         notifyListeners();
 
         // Assemble frames via FFmpeg
@@ -219,10 +311,11 @@ class DownloadService extends ChangeNotifier {
         if (mp4File != null && await mp4File.exists()) {
           task.status = DownloadStatus.completed;
           task.progress = 1.0;
-          _updateNotification('Download Complete (MP4)', task.metadata.title, 1.0);
+          _updateNotification(
+              'Unduhan Selesai (MP4)', task.metadata.title, 1.0);
           await scanMediaFile(destinationPath);
         } else {
-          throw Exception('Failed to compile Ugoira animation to MP4.');
+          throw Exception('Gagal mengompilasi animasi Pixiv Ugoira ke MP4.');
         }
 
         notifyListeners();
@@ -250,11 +343,12 @@ class DownloadService extends ChangeNotifier {
           task.totalBytes = total;
           task.progress = total > 0 ? (received / total) : 0.0;
 
-          final speedMb = (task.speedBytesPerSec / (1024 * 1024)).toStringAsFixed(1);
+          final speedMb =
+              (task.speedBytesPerSec / (1024 * 1024)).toStringAsFixed(1);
           final percent = (task.progress * 100).toInt();
 
           _updateNotification(
-            '$percent% ($speedMb MB/s) - Downloading',
+            '$percent% ($speedMb MB/s) - Mengunduh',
             task.metadata.title,
             task.progress,
           );
@@ -269,18 +363,17 @@ class DownloadService extends ChangeNotifier {
         await partFile.rename(destinationPath);
         task.status = DownloadStatus.completed;
         task.progress = 1.0;
-        _updateNotification('Download Complete', task.metadata.title, 1.0);
+        _updateNotification('Unduhan Selesai', task.metadata.title, 1.0);
         await scanMediaFile(destinationPath);
       } else {
-        throw Exception('Downloaded file not found after completion.');
+        throw Exception('File hasil unduhan tidak ditemukan setelah selesai.');
       }
     } catch (e) {
       if (task.status != DownloadStatus.cancelled) {
         task.status = DownloadStatus.failed;
-        task.errorMessage = e.toString();
-        _updateNotification('Download Failed', task.metadata.title, 0.0);
+        task.errorMessage = e.toString().replaceAll('Exception: ', '');
+        _updateNotification('Unduhan Gagal', task.metadata.title, 0.0);
       }
-      // Zero Orphaned Files: Clean up partial or empty files
       if (task.savedFilePath != null) {
         await CleanCancel.cleanupPartialFile(task.savedFilePath!);
       }

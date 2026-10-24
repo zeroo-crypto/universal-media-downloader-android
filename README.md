@@ -1,4 +1,4 @@
-# Universal Media Downloader for Android
+# ZALL — All-in-One Media Downloader for Android
 
 <p align="center">
   <b>High-Performance Standalone On-Device Media Extractor & Downloader (Android 8.0 – 15+)</b><br>
@@ -13,6 +13,19 @@
   <a href="#android-permissions-specification"><img src="https://img.shields.io/badge/Permissions-Scoped%20Storage-informational" alt="Permissions"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
 </p>
+
+---
+
+## What is ZALL?
+
+**ZALL** is a modern, privacy-respecting Android media downloader designed with a sleek Dark Blue aesthetic (`#141417`, `#202129`, `#3B82F6`). It enables seamless extraction and downloading of videos, high-resolution photos, multi-page albums, and animations directly from leading social platforms:
+
+- **YouTube**: 1080p Full HD, 720p HD, and pure M4A/AAC audio extraction (powered by on-device manifest parser `youtube_explode_dart`).
+- **Pixiv**: Original illustrations, multi-page manga albums, user profile/bookmark galleries, R-18 artworks with `PHPSESSID` session support, and animated Ugoira compilation to H.264 MP4.
+- **Instagram**: Reels, posts, and multi-item carousel albums via authentic captioned scraper with optional `sessionid` support.
+- **Pinterest**: Original master images (`/originals/`), MP4 pin videos, boards, and shortlinks (`pin.it`).
+- **TikTok**: HD watermark-free videos, photo slide carousels, and original audio soundtracks.
+- **X / Twitter**: Multi-photo tweets and high-bitrate MP4 videos via resilient multi-tier fallback (FxTwitter -> VxTwitter -> Twimg). Zero White Screen crashes.
 
 ---
 

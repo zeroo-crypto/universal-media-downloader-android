@@ -1,7 +1,7 @@
-# Universal Media Downloader v1.0.0 — Official Release Notes
+# ZALL v1.0.0 — Official Release Notes
 
 <p align="center">
-  <b>High-Performance Standalone On-Device Media Extractor & Downloader for Android (8.0 – 15+)</b><br>
+  <b>ZALL: High-Performance Standalone On-Device Media Extractor & Downloader for Android (8.0 – 15+)</b><br>
   <i>Download high-resolution media directly on your Android device without proxy servers, cloud scrapers, or third-party backends.</i>
 </p>
 
@@ -9,7 +9,7 @@
 
 ## Release Overview
 
-We are proud to announce the official release of **Universal Media Downloader v1.0.0** for Android. 
+We are proud to announce the official release of **ZALL v1.0.0** (All-in-One Media Downloader) for Android.
 
 All release binaries have been built with 4-byte zip alignment and signed deterministically using **APK Signature Scheme v1 (JAR signing)** and **v2 (Full APK Signing)**. This explicit dual-scheme signing resolves physical device installation issues ("invalid package" / package parse error) across all Android versions (Android 8.0 Oreo through Android 15+) and custom vendor ROMs (MIUI/HyperOS, ColorOS, OneUI).
 

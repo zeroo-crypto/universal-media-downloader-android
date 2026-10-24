@@ -5,8 +5,9 @@ import 'package:provider/provider.dart';
 
 import 'services/download_service.dart';
 import 'services/share_intent_service.dart';
+import 'ui/theme/zall_theme.dart';
 import 'ui/screens/home_screen.dart';
-import 'ui/screens/downloads_screen.dart';
+import 'ui/screens/gallery_screen.dart';
 import 'ui/screens/settings_screen.dart';
 
 void main() async {
@@ -15,9 +16,9 @@ void main() async {
   // Initialize Foreground Task for Background Downloads
   FlutterForegroundTask.init(
     androidNotificationOptions: AndroidNotificationOptions(
-      channelId: 'universal_media_downloader_channel',
-      channelName: 'Universal Downloader Service',
-      channelDescription: 'Displays media download progress in the background',
+      channelId: 'zall_media_downloader_channel',
+      channelName: 'ZALL Downloader Service',
+      channelDescription: 'Menampilkan proses unduhan media di latar belakang',
       channelImportance: NotificationChannelImportance.LOW,
       priority: NotificationPriority.LOW,
     ),
@@ -35,20 +36,19 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => DownloadService()),
       ],
-      child: const UniversalDownloaderApp(),
+      child: const ZallApp(),
     ),
   );
 }
 
-class UniversalDownloaderApp extends StatefulWidget {
-  const UniversalDownloaderApp({super.key});
+class ZallApp extends StatefulWidget {
+  const ZallApp({super.key});
 
   @override
-  State<UniversalDownloaderApp> createState() => _UniversalDownloaderAppState();
+  State<ZallApp> createState() => _ZallAppState();
 }
 
-class _UniversalDownloaderAppState extends State<UniversalDownloaderApp> {
-  int _currentIndex = 0;
+class _ZallAppState extends State<ZallApp> {
   String? _incomingUrl;
 
   @override
@@ -59,12 +59,13 @@ class _UniversalDownloaderAppState extends State<UniversalDownloaderApp> {
   }
 
   Future<void> _requestAppPermissions() async {
-    // Request storage and notification permissions
-    await [
-      Permission.storage,
-      Permission.notification,
-      Permission.manageExternalStorage,
-    ].request();
+    try {
+      await [
+        Permission.storage,
+        Permission.notification,
+        Permission.manageExternalStorage,
+      ].request();
+    } catch (_) {}
   }
 
   void _initShareIntent() {
@@ -72,7 +73,6 @@ class _UniversalDownloaderAppState extends State<UniversalDownloaderApp> {
       onUrlReceived: (url) {
         setState(() {
           _incomingUrl = url;
-          _currentIndex = 0; // Switch to Home tab immediately
         });
       },
     );
@@ -87,54 +87,17 @@ class _UniversalDownloaderAppState extends State<UniversalDownloaderApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Universal Downloader',
+      title: 'ZALL',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.indigo,
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.indigo,
-        brightness: Brightness.dark,
-      ),
-      themeMode: ThemeMode.system,
-      home: Scaffold(
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [
-            HomeScreen(initialUrl: _incomingUrl),
-            const DownloadsScreen(),
-            const SettingsScreen(),
-          ],
-        ),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _currentIndex,
-          onDestinationSelected: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.download_outlined),
-              selectedIcon: Icon(Icons.download),
-              label: 'Downloads',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
-        ),
-      ),
+      theme: ZallTheme.darkTheme,
+      darkTheme: ZallTheme.darkTheme,
+      themeMode: ThemeMode.dark,
+      routes: {
+        '/': (_) => HomeScreen(initialUrl: _incomingUrl),
+        '/gallery': (_) => const GalleryScreen(),
+        '/settings': (_) => const SettingsScreen(),
+      },
+      initialRoute: '/',
     );
   }
 }

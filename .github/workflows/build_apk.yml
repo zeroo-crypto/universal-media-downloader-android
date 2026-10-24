@@ -122,7 +122,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.0
-          name: "Universal Media Downloader v1.0.0"
+          name: "ZALL v1.0.0 (Release)"
           body_path: RELEASE_NOTES.md
           draft: false
           prerelease: false
