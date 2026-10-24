@@ -90,8 +90,8 @@ class PixivExtractor implements BaseExtractor {
       if (metaResp.statusCode == 200) {
         final metaJson = jsonDecode(metaResp.body) as Map<String, dynamic>;
         final metaBody = metaJson['body'] as Map<String, dynamic>?;
-        if (metaBody != null && metaBody['src'] != null) {
-          final zipUrl = metaBody['src'] as String;
+        if (metaBody != null && (metaBody['originalSrc'] != null || metaBody['src'] != null)) {
+          final zipUrl = (metaBody['originalSrc'] ?? metaBody['src']) as String;
           final frames = (metaBody['frames'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
           return MediaMetadata(
